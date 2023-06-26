@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b1162c8593ef125e6c5e0a2ac8f63fb",
+    "content-hash": "23ba54b5c3494cd4af478b4c2be022cf",
     "packages": [
         {
             "name": "composer/installers",
@@ -1180,6 +1180,61 @@
                 }
             ],
             "time": "2022-10-16T01:01:54+00:00"
+        },
+        {
+            "name": "wp-graphql/wp-graphql-jwt-authentication",
+            "version": "v0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-graphql/wp-graphql-jwt-authentication.git",
+                "reference": "5de35ce97efcae2beeb9118e1ad458480ae6187b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-graphql/wp-graphql-jwt-authentication/zipball/5de35ce97efcae2beeb9118e1ad458480ae6187b",
+                "reference": "5de35ce97efcae2beeb9118e1ad458480ae6187b",
+                "shasum": ""
+            },
+            "require": {
+                "firebase/php-jwt": "^6.1.0"
+            },
+            "require-dev": {
+                "codeception/module-asserts": "^1.0",
+                "codeception/module-cli": "^1.0",
+                "codeception/module-db": "^1.0",
+                "codeception/module-filesystem": "^1.0",
+                "codeception/module-phpbrowser": "^1.0",
+                "codeception/module-rest": "^1.2",
+                "codeception/module-webdriver": "^1.0",
+                "codeception/util-universalframework": "^1.0",
+                "lucatume/wp-browser": "3.1.0",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "wordpress-plugin",
+            "autoload": {
+                "psr-4": {
+                    "WPGraphQL\\JWT_Authentication\\": "src/"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "jasonbahl",
+                    "email": "jasonbahl@mac.com"
+                }
+            ],
+            "description": "JWT Authentication for WPGraphQL",
+            "support": {
+                "issues": "https://github.com/wp-graphql/wp-graphql-jwt-authentication/issues",
+                "source": "https://github.com/wp-graphql/wp-graphql-jwt-authentication/tree/v0.7.0"
+            },
+            "time": "2023-03-31T21:57:48+00:00"
         },
         {
             "name": "wp-graphql/wp-graphql-woocommerce",
