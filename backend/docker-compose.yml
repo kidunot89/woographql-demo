@@ -1,0 +1,38 @@
+version: '3'
+services:
+  db:
+    image: percona:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./import:/docker-entrypoint-initdb.d:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: not-so-secure
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: not-so-secure
+
+  memcached:
+    image: memcached:1.5
+
+  php:
+    depends_on:
+      - db
+      - memcached
+    ports:
+      - "8080:8080"
+    image: bitpoke/wordpress-runtime:bedrock-php-8.0
+    volumes:
+      - ./:/app
+      - ./bin/php.ini:/usr/local/etc/php/php.ini
+    environment:
+      - DB_HOST=db:3306
+      - DB_USER=wordpress
+      - DB_PASSWORD=not-so-secure
+      - DB_NAME=wordpress
+      - MEMCACHED_HOST=memcached:11211
+      - WP_HOME=http://localhost:8080
+      - WP_SITEURL=http://localhost:8080/wp
+      - WP_ENV=development
+
+volumes:
+  db_data: {}
