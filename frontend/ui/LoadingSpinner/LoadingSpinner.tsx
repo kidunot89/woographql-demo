@@ -4,10 +4,10 @@ export interface LoadingSpinnerProps {
   color?: string;
 }
 
-export function LoadingSpinner({ className = '', noText = false, color = 'wedgewood-200' }: LoadingSpinnerProps) {
+export function LoadingSpinner({ className = '', noText = false, color = 'amber-400' }: LoadingSpinnerProps) {
   return (
     <div aria-label="Loading..." role="status" className={`relative flex items-center justify-center space-x-2 ${className}`}>
-      <svg className="h-6 w-6 animate-spin stroke-wedgewood-200" viewBox="0 0 256 256">
+      <svg className="h-6 w-6 animate-spin stroke-amber-600" viewBox="0 0 256 256">
         <line x1="128" y1="32" x2="128" y2="64" strokeLinecap="round" strokeLinejoin="round" strokeWidth="24" />
         <line
           x1="195.9"

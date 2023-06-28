@@ -7,8 +7,8 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@woographql/components/ui/toast"
-import { useToast } from "@woographql/components/ui/use-toast"
+} from "@woographql/ui/toast"
+import { useToast } from "@woographql/ui/use-toast"
 
 export function Toaster() {
   const { toasts } = useToast()

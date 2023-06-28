@@ -1,4 +1,7 @@
-import { Shop } from '@woographql/components/Shop';
+import { Shop } from '@woographql/server/Shop';
+import { ShopProvider } from '@woographql/client/ShopProvider';
+import { SessionProvider } from '@woographql/client/SessionProvider';
+
 import {
   fetchAllProducts,
   fetchAllCategories,
@@ -20,7 +23,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     </main>
   );
 
-  const products = await fetchAllProducts();
+  const products = await fetchAllProducts({ category: category });
   const categories = await fetchAllCategories() || [];
   const colors = await fetchAllColors() || [];
 
@@ -31,14 +34,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   );
 
   return (
-    <main className="w-full">
-      <h1 className="max-w-screen-lg text-2xl font-bold font-serif mx-auto mb-8">Shop</h1>
-      <Shop
-        products={products}
-        categories={categories}
-        colors={colors}
-        category={category}
-      />
-    </main>
+    <SessionProvider>
+      <main className="w-full">
+        <h1 className="max-w-screen-lg text-2xl font-bold font-serif mx-auto mb-8">Shop</h1>
+        <ShopProvider allProducts={products}>
+          <Shop
+            products={products}
+            categories={categories}
+            colors={colors}
+          />
+        </ShopProvider>
+      </main>
+    </SessionProvider>
   )
 }

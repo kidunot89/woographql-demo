@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import NextImage from 'next/image';
 import clsx from 'clsx';
-import { LoadingSpinner } from '@woographql/components/LoadingSpinner';
-import { AspectRatio } from "@woographql/components/ui/aspect-ratio"
+import { LoadingSpinner } from '@woographql/ui/LoadingSpinner';
+import { AspectRatio } from "@woographql/ui/aspect-ratio"
 
 export type ImageProps = {
   className?: string;

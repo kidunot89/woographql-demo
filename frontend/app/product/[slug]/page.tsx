@@ -3,7 +3,9 @@ import {
   Product,
   ProductIdTypeEnum
 } from '@woographql/graphql';
-import { ShopProduct } from '@woographql/components/ShopProduct';
+import { ShopProduct } from '@woographql/server/ShopProduct';
+import { SessionProvider } from '@woographql/client/SessionProvider';
+import { Toaster } from '@woographql/ui/toaster';
 
 async function fetchProductBySlug(slug: string) {
   try {
@@ -40,8 +42,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 
   return (
-    <main className="w-full">
-      <ShopProduct product={product} />
-    </main>
-  )
+    <>
+      <SessionProvider>
+        <main className="w-full">
+          <ShopProduct product={product} />
+        </main>
+      </SessionProvider>
+      <Toaster />
+    </>
+  );
 }

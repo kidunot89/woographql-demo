@@ -3,7 +3,9 @@ module.exports = {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
+    './ui/**/*.{ts,tsx}',
+    './server/**/*.{ts,tsx}',
+    './client/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
 	],
@@ -70,6 +72,12 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+    },
+    screens: {
+      sm: '480px',
+      md: '768px',
+      lg: '976px',
+      xl: '1440px',
     },
   },
   plugins: [require("tailwindcss-animate")],

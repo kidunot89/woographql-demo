@@ -161,13 +161,22 @@ fragment ProductContentFull on Product {
       attributeId
       ... on LocalProductAttribute {
         name
+        label
         options
         variation
       }
       ... on GlobalProductAttribute {
         name
+        label
         options
         variation
+        terms(first: 100) {
+          nodes {
+            id
+            name
+            slug
+          }
+        }
       }
     }
   }
@@ -207,6 +216,11 @@ fragment ProductContentFull on Product {
             label
             value
           }
+        }
+        image {
+          id
+          sourceUrl
+          altText
         }
       }
     }
@@ -525,18 +539,12 @@ query GetShopColors($first: Int, $after: String) {
   }
 }
 
-query GetCart($customerId: Int) {
+query GetSession {
   cart {
     ...CartContent
   }
-  customer(customerId: $customerId) {
-    ...CustomerContent
-  }
-}
-
-query GetCustomer {
   customer {
-    ...CustomerFields
+    ...CustomerContent
   }
 }
 
@@ -673,12 +681,9 @@ mutation UpdateSession($input: UpdateSessionInput!) {
         value
     }
     customer {
-      cartUrl
       cartNonce
-      checkoutUrl
       checkoutNonce
-      addPaymentMethodUrl
-      addPaymentMethodNonce
+      accountNonce
     }
   }
 }

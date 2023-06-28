@@ -3,9 +3,13 @@ import {
   Product,
   ProductCategory,
   PaColor,
+  RootQueryToProductConnectionWhereArgs,
   getClient
 } from '@woographql/graphql';
-import { Shop } from '@woographql/components/Shop';
+import { Shop } from '@woographql/server/Shop';
+import { ShopProvider } from '@woographql/client/ShopProvider';
+import { SessionProvider } from '@woographql/client/SessionProvider';
+import { Toaster } from '@woographql/ui/toaster';
 
 const initialConnectionResults = {
   pageInfo: {
@@ -16,7 +20,7 @@ const initialConnectionResults = {
   nodes: [],
 };
 
-export async function fetchAllProducts() {
+export async function fetchAllProducts(where?: RootQueryToProductConnectionWhereArgs) {
   try {
     const client = getClient();
     let data = { products: initialConnectionResults }
@@ -25,6 +29,7 @@ export async function fetchAllProducts() {
       const next = await client.GetProducts({
         first: 1,
         after,
+        where,
       });
 
       data = deepmerge(data, next);
@@ -92,13 +97,20 @@ export default async function ShopPage() {
   );
 
   return (
-    <main className="w-full">
-      <h1 className="max-w-screen-lg text-2xl font-bold font-serif mx-auto mb-8">Shop</h1>
-      <Shop
-        products={products}
-        categories={categories}
-        colors={colors}
-      />
-    </main>
-  )
+    <>
+      <SessionProvider>
+        <main className="w-full">
+          <h1 className="max-w-screen-lg text-2xl font-bold font-serif mx-auto mb-8">Shop</h1>
+          <ShopProvider allProducts={products}>
+            <Shop
+              products={products}
+              categories={categories}
+              colors={colors}
+            />
+          </ShopProvider>
+        </main>
+      </SessionProvider>
+      <Toaster />
+    </>
+  );
 }
