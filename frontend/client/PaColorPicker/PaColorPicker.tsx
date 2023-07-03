@@ -33,17 +33,36 @@ export function PaColorPicker({ colors }: PaColorPickerProps) {
     selectedColors,
     addColor,
     removeColor,
+    allProducts,
   } = useShopContext();
+
+  const displayedColors = allProducts
+    ? colors.filter((color) => {
+      const productsWithColor = allProducts.filter((product) => {
+        if (!product.allPaColor || product.allPaColor.nodes.length === 0) {
+          return false;
+        }
+
+        return !product.allPaColor.nodes.some((node: PaColor) => {
+          return node.slug !== color.slug;
+        });
+      });
+
+      return productsWithColor.length > 0;
+    })
+    : colors;
+
   return (
     <>
       <div className="flex gap-2 flex-wrap mb-4">
         {selectedColors.map((slug) => {
-          const color = colors.find((c) => c.slug === slug);
+          const color = displayedColors.find((c) => c.slug === slug);
           if (!color) {
             return null;
           }
           return (
             <Badge
+              key={color.id}
               variant="outline"
               onClick={() => removeColor(slug)}
               className={cn(
@@ -59,10 +78,11 @@ export function PaColorPicker({ colors }: PaColorPickerProps) {
         })}
       </div>
       <ul className="mb-4">
-        {colors.map((color) => {
+        {displayedColors.map((color) => {
           if (selectedColors.includes(color.slug as string)) {
             return null;
           }
+
           return (
             <li key={color.id}>
               <Button

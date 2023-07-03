@@ -1,6 +1,4 @@
 import { GraphQLError } from 'graphql/error';
-import { GraphQLClient } from 'graphql-request';
-import jwtDecode from 'jwt-decode';
 
 import {
   UpdateCustomerInput,
@@ -8,12 +6,8 @@ import {
   Cart,
 } from '@woographql/graphql';
 import { isSSR } from '@woographql/utils/ssr';
-import {
-  wpNonceHash,
-  time,
-  HOUR_IN_SECONDS,
-  MINUTE_IN_SECONDS,
-} from '@woographql/utils/nonce';
+import { getClientSessionId } from '@woographql/utils/client';
+
 
 export const isDev = () => !!process.env.WEBPACK_DEV_SERVER;
 
@@ -51,13 +45,15 @@ async function apiCall<T>(url: string, input: globalThis.RequestInit) {
 }
 
 // Auth management.
-function saveCredentials(authToken: string, sessionToken: string, refreshToken?: string) {
+function saveCredentials(authToken: string, sessionToken?: string, refreshToken?: string) {
   if (isSSR()) {
     return;
   }
 
   sessionStorage.setItem(process.env.AUTH_TOKEN_SS_KEY as string, authToken);
-  sessionStorage.setItem(process.env.SESSION_TOKEN_LS_KEY as string, sessionToken);
+  if (!!sessionToken) {
+    localStorage.setItem(process.env.SESSION_TOKEN_LS_KEY as string, sessionToken);
+  }
   if (refreshToken) {
     localStorage.setItem(process.env.REFRESH_TOKEN_LS_KEY as string, refreshToken);
   }
@@ -68,10 +64,11 @@ function saveSessionToken(sessionToken: string) {
 }
 
 export function hasCredentials() {
+  const sessionToken = localStorage.getItem(process.env.SESSION_TOKEN_LS_KEY as string);
   const authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
   const refreshToken = localStorage.getItem(process.env.REFRESH_TOKEN_LS_KEY as string);
 
-  if (!!authToken && !!refreshToken) {
+  if (!!sessionToken && !!authToken && !!refreshToken) {
     return true;
   }
 
@@ -172,9 +169,12 @@ export async function sendPasswordReset(username: string): Promise<boolean|strin
 
 export async function getAuthToken() {
   let authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
-  if (!authToken || !tokenSetter) {
+  if (!authToken) {
     authToken = await fetchAuthToken();
-    authToken && setAutoFetcher();
+  }
+
+  if (authToken && !tokenSetter) {
+    setAutoFetcher();
   }
   return authToken;
 }
@@ -190,8 +190,8 @@ async function fetchSessionToken() {
   );
 
   const { sessionToken } = json;
-  saveSessionToken(sessionToken);
 
+  sessionToken && saveSessionToken(sessionToken);
   return sessionToken;
 }
 
@@ -209,13 +209,19 @@ export function hasRefreshToken() {
   return !!refreshToken;
 }
 
+export function hasAuthToken() {
+  const authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
+
+  return !!authToken;
+}
+
 export type FetchSessionResponse = {
   customer: Customer;
   cart: Cart;
 }
 export async function getSession(): Promise<FetchSessionResponse|string> {
-  const sessionToken = await getSessionToken();
   const authToken = await getAuthToken();
+  const sessionToken = await getSessionToken();
   let json: FetchSessionResponse;
   try {
     json = await apiCall<FetchSessionResponse>(
@@ -312,71 +318,16 @@ export async function updateCart(input: CartAction): Promise<Cart|string> {
   return cart;
 }
 
-type Creds = {
-  userAgent: string;
-  ip: string;
-  issued: number;
-}
-async function createClientSessionId() {
-  // Create credentials object with UserAgent.
-  const credentials: Creds = {
-    userAgent: window?.navigator?.userAgent || '',
-    ip: '',
-    issued: 0,
-  };
 
-  // Fetch IP.
-  const response = await fetch('https://api.ipify.org/?format=json');
-  const { data } = await response.json();
-  credentials.ip = data?.ip || '';
 
-  // Mark time of creation.
-  credentials.issued = time();
-
-  // Generate Client Session ID.
-  const clientSessionId = wpNonceHash(JSON.stringify(credentials));
-  const timeout = `${credentials.issued + HOUR_IN_SECONDS}`;
-
-  sessionStorage.setItem(process.env.CLIENT_SESSION_SS_KEY as string, clientSessionId);
-  sessionStorage.setItem(process.env.CLIENT_SESSION_EXP_SS_KEY as string, timeout);
-
-  return { clientSessionId, timeout };
-}
-
-let clientSetter: ReturnType<typeof setInterval>;
-function setClientFetcher() {
-  if (clientSetter) {
-    clearInterval(clientSetter);
-  }
-  clientSetter = setInterval(
-    async () => {
-      if (!hasCredentials()) {
-        clearInterval(clientSetter);
-        return;
-      }
-      createClientSessionId();
-    },
-    Number(45 * MINUTE_IN_SECONDS),
-  );
-}
-
-async function getClientSessionId() {
-  let clientSessionId = sessionStorage.getItem(process.env.CLIENT_SESSION_SS_KEY as string);
-  let timeout = sessionStorage.getItem(process.env.CLIENT_SESSION_EXP_SS_KEY as string);
-  if (!clientSessionId || !timeout || time() > Number(timeout)) {
-    ({ clientSessionId, timeout } = await createClientSessionId());
-    setClientFetcher();
-  }
-
-  return { clientSessionId, timeout };
-}
-
-type FetchAuthURLResponse = {
-  addPaymentMethodUrl: string;
+export type FetchAuthURLResponse = {
+  cartUrl: string;
+  checkoutUrl: string;
+  accountUrl: string
 }
 export async function fetchAuthURLs(): Promise<FetchAuthURLResponse|string> {
-  const sessionToken = await getSessionToken();
   const authToken = await getAuthToken();
+  const sessionToken = await getSessionToken();
   const { clientSessionId, timeout } = await getClientSessionId();
   let json: FetchAuthURLResponse;
   try {
@@ -407,21 +358,7 @@ export function deleteCredentials() {
   if (tokenSetter) {
     clearInterval(tokenSetter);
   }
-  sessionStorage.removeItem(process.env.SESSION_TOKEN_LS_KEY as string);
+  localStorage.removeItem(process.env.SESSION_TOKEN_LS_KEY as string);
   sessionStorage.removeItem(process.env.AUTH_TOKEN_SS_KEY as string);
   localStorage.removeItem(process.env.REFRESH_TOKEN_LS_KEY as string);
-}
-
-type DecodedToken = {
-  data: { [key: string]: string };
-}
-export function getSessionMeta(): DecodedToken['data'] {
-  const sessionToken = sessionStorage.getItem(process.env.SESSION_TOKEN_LS_KEY as string);
-  if (!sessionToken) {
-    return {};
-  }
-
-  const token = jwtDecode<DecodedToken>(sessionToken);
-
-  return token?.data || {};
 }

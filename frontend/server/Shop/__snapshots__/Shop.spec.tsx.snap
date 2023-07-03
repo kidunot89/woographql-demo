@@ -1,0 +1,347 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shop component should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="w-full flex max-w-screen-lg mx-auto"
+    >
+      <button
+        aria-controls="radix-:r0:"
+        aria-expanded="false"
+        aria-haspopup="dialog"
+        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 lg:hidden w-16 fixed inset-x-0 mx-auto bottom-10 z-30"
+        data-state="closed"
+        type="button"
+      >
+        <i
+          aria-label="Open sidebar"
+          class="fa-solid fa-filter"
+        />
+      </button>
+      <div
+        class="hidden lg:block w-1/4 px-4"
+      >
+        <p
+          class="font-serif text-lg font-bold mb-2"
+        >
+          Categories
+        </p>
+        <div
+          class="flex gap-2 flex-wrap mb-4"
+        />
+        <ul
+          class="mb-4"
+        >
+          <li>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0"
+            >
+              Clothing
+            </button>
+          </li>
+          <li>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0"
+            >
+              Accessories
+            </button>
+          </li>
+        </ul>
+        <p
+          class="font-serif text-lg font-bold mb-2"
+        >
+          Colors
+        </p>
+        <div
+          class="flex gap-2 flex-wrap mb-4"
+        />
+        <ul
+          class="mb-4"
+        >
+          <li>
+            <button
+              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+            >
+              <div
+                class="rounded w-6 h-6"
+                style="background-color: red;"
+              />
+              Red
+            </button>
+          </li>
+          <li>
+            <button
+              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+            >
+              <div
+                class="rounded w-6 h-6"
+                style="background-color: blue;"
+              />
+              Blue
+            </button>
+          </li>
+          <li>
+            <button
+              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+            >
+              <div
+                class="rounded w-6 h-6"
+                style="background-color: green;"
+              />
+              Green
+            </button>
+          </li>
+          <li>
+            <button
+              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+            >
+              <div
+                class="rounded w-6 h-6"
+                style="background-color: yellow;"
+              />
+              Yellow
+            </button>
+          </li>
+        </ul>
+        <p
+          class="font-serif text-lg font-bold mb-2"
+        >
+          Price
+        </p>
+        <div
+          class="mb-4 flex gap-x-2 gap-y-4 flex-wrap"
+        >
+          <input
+            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 basis-1/2 shrink"
+            max="100"
+            min="0"
+            type="number"
+            value="0"
+          />
+          <input
+            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 basis-0 grow"
+            max="100"
+            min="0"
+            type="number"
+            value="100"
+          />
+          <span
+            aria-disabled="false"
+            class="relative flex touch-none select-none items-center w-full"
+            data-orientation="horizontal"
+            dir="ltr"
+            style="--radix-slider-thumb-transform: translateX(-50%);"
+          >
+            <span
+              class="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20"
+              data-orientation="horizontal"
+            >
+              <span
+                class="absolute h-full bg-primary"
+                data-orientation="horizontal"
+                style="left: 0%; right: 0%;"
+              />
+            </span>
+            <span
+              style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(0% + 0px);"
+            >
+              <span
+                aria-label="Minimum"
+                aria-orientation="horizontal"
+                aria-valuemax="100"
+                aria-valuemin="0"
+                aria-valuenow="0"
+                class="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                data-orientation="horizontal"
+                data-radix-collection-item=""
+                role="slider"
+                style=""
+                tabindex="0"
+              />
+            </span>
+            <span
+              style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(100% + 0px);"
+            >
+              <span
+                aria-label="Maximum"
+                aria-orientation="horizontal"
+                aria-valuemax="100"
+                aria-valuemin="0"
+                aria-valuenow="100"
+                class="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                data-orientation="horizontal"
+                data-radix-collection-item=""
+                role="slider"
+                style=""
+                tabindex="0"
+              />
+            </span>
+          </span>
+        </div>
+      </div>
+      <div
+        class="w-full px-4 lg:w-3/4"
+      >
+        <p
+          class="font-serif text-lg font-bold mb-2"
+        >
+          Search
+        </p>
+        <input
+          class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 mb-4"
+          value=""
+        />
+        <p
+          class="font-serif text-lg font-bold mb-2"
+        >
+          Results
+        </p>
+        <p
+          class="font-semibold mb-4"
+        >
+          Showing 
+          4
+           products
+        </p>
+        <div
+          class="flex flex-wrap justify-center md:justify-start gap-4"
+        >
+          <a
+            href="/product/t-shirt"
+          >
+            <div
+              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+            >
+              <div
+                class="flex flex-col space-y-1.5 p-6"
+              >
+                <h3
+                  class="font-semibold leading-none tracking-tight font-serif"
+                >
+                  T Shirt
+                </h3>
+              </div>
+              <div
+                class="p-6 pt-0"
+              >
+                <p
+                  class="text-sm"
+                />
+              </div>
+              <div
+                class="flex items-center p-6 pt-0"
+              >
+                <p
+                  class="font-serif font-bold"
+                >
+                  $10.00
+                </p>
+              </div>
+            </div>
+          </a>
+          <a
+            href="/product/belt"
+          >
+            <div
+              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+            >
+              <div
+                class="flex flex-col space-y-1.5 p-6"
+              >
+                <h3
+                  class="font-semibold leading-none tracking-tight font-serif"
+                >
+                  Belt
+                </h3>
+              </div>
+              <div
+                class="p-6 pt-0"
+              >
+                <p
+                  class="text-sm"
+                />
+              </div>
+              <div
+                class="flex items-center p-6 pt-0"
+              >
+                <p
+                  class="font-serif font-bold"
+                >
+                  $20.00
+                </p>
+              </div>
+            </div>
+          </a>
+          <a
+            href="/product/shoes"
+          >
+            <div
+              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+            >
+              <div
+                class="flex flex-col space-y-1.5 p-6"
+              >
+                <h3
+                  class="font-semibold leading-none tracking-tight font-serif"
+                >
+                  Shoes
+                </h3>
+              </div>
+              <div
+                class="p-6 pt-0"
+              >
+                <p
+                  class="text-sm"
+                />
+              </div>
+              <div
+                class="flex items-center p-6 pt-0"
+              >
+                <p
+                  class="font-serif font-bold"
+                >
+                  $30.00
+                </p>
+              </div>
+            </div>
+          </a>
+          <a
+            href="/product/hat"
+          >
+            <div
+              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+            >
+              <div
+                class="flex flex-col space-y-1.5 p-6"
+              >
+                <h3
+                  class="font-semibold leading-none tracking-tight font-serif"
+                >
+                  Hat
+                </h3>
+              </div>
+              <div
+                class="p-6 pt-0"
+              >
+                <p
+                  class="text-sm"
+                />
+              </div>
+              <div
+                class="flex items-center p-6 pt-0"
+              >
+                <p
+                  class="font-serif font-bold"
+                >
+                  $40.00
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

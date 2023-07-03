@@ -4,7 +4,7 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   testEnvironment: 'jsdom',
   moduleNameMapper: {
-    '^@axis(.*)$': '<rootDir>$1',
+    '^@woographql(.*)$': '<rootDir>$1',
   },
   transform: {
     '^.+\\.[jt]sx?$': ['babel-jest', { presets: ['next/babel'] }],
@@ -21,7 +21,10 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/utils/',
-    '/graphql/graphql.generated.tsx',
+    '/graphql/generated.ts',
     '/pages/',
+    'codegen.ts',
+    'jest.config.ts',
+    'next-env.d.ts',
   ],
 };

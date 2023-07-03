@@ -1,13 +1,10 @@
+import {
+  fetchProducts,
+  fetchColors,
+} from '@woographql/graphql';
+
 import { Shop } from '@woographql/server/Shop';
 import { ShopProvider } from '@woographql/client/ShopProvider';
-import { SessionProvider } from '@woographql/client/SessionProvider';
-
-import {
-  fetchAllProducts,
-  fetchAllCategories,
-  fetchAllColors,
-} from '../page';
-
 export interface CategoryPageProps { 
   params: {
     category: string
@@ -18,33 +15,22 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = params;
 
   if (!category) return (
-    <main className="w-full">
-      <h1>Page not found</h1>
-    </main>
+    <h1>Page not found</h1>
   );
 
-  const products = await fetchAllProducts({ category: category });
-  const categories = await fetchAllCategories() || [];
-  const colors = await fetchAllColors() || [];
+  const products = await fetchProducts(1, 0, { category: category });
+  const colors = await fetchColors(1) || [];
 
-  if (!products) return (
-    <main className="w-full">
-      <h1>Page not found</h1>
-    </main>
+  if (!products || products.length === 0) return (
+    <h1>{`The ${category} category does not exist. Please check URL and try again.`}</h1>
   );
 
   return (
-    <SessionProvider>
-      <main className="w-full">
-        <h1 className="max-w-screen-lg text-2xl font-bold font-serif mx-auto mb-8">Shop</h1>
-        <ShopProvider allProducts={products}>
-          <Shop
-            products={products}
-            categories={categories}
-            colors={colors}
-          />
-        </ShopProvider>
-      </main>
-    </SessionProvider>
-  )
+    <ShopProvider allProducts={products}>
+      <Shop
+        products={products}
+        colors={colors}
+      />
+    </ShopProvider>
+  );
 }

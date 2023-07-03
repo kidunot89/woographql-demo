@@ -4,7 +4,6 @@ import {
   useContext,
   useReducer,
   useEffect,
-  useState,
 } from 'react';
 
 import {
@@ -20,31 +19,31 @@ import {
   deleteCredentials,
   getSession as getSessionApiCall,
   FetchSessionResponse as Session,
+  FetchAuthURLResponse as AuthUrls,
   updateCustomer as updateCustomerApiCall,
-  fetchAuthURLs,
+  fetchAuthURLs as fetchAuthURLsApiCall,
   login as loginApiCall,
   sendPasswordReset as sendPasswordResetApiCall,
   updateCart as updateCartApiCall,
   CartAction,
-  getSessionMeta,
 } from '@woographql/utils/session';
+import {
+  deleteClientSessionId,
+  deleteClientCredentials,
+} from '@woographql/utils/client';
 import { useToast } from '@woographql/ui/use-toast';
 
-type SessionMeta = {
-  checkout_url: string;
-  add_payment_method?: string;
-  change_sub_payment?: string;
-  renew_sub?: string;
-}
+
 export interface SessionContext {
   isAuthenticated: boolean;
   hasCredentials: boolean;
   cart: Cart|null;
   customer: Customer|null;
-  sessionMeta: SessionMeta|null;
-  addPaymentMethodUrl: string;
-  changeSubPaymentMethodUrl: string;
-  renewSubPaymentMethodUrl: string
+  cartUrl: string;
+  checkoutUrl: string;
+  accountUrl: string
+  urlsExpired: boolean;
+  refetchUrls: () => void;
   fetching: boolean;
   logout: (message?: string) => void;
   updateCustomer: (input: UpdateCustomerInput, successMessage?: string) => Promise<boolean>;
@@ -60,10 +59,11 @@ const initialContext: SessionContext = {
   hasCredentials: false,
   cart: null,
   customer: null,
-  sessionMeta: null,
-  addPaymentMethodUrl: '',
-  changeSubPaymentMethodUrl: '',
-  renewSubPaymentMethodUrl: '',
+  cartUrl: '',
+  checkoutUrl: '',
+  accountUrl: '',
+  urlsExpired: true,
+  refetchUrls: () => null,
   fetching: false,
   logout: (message?: string) => null,
   updateCustomer: (input: UpdateCustomerInput) => new Promise((resolve) => { resolve(false); }),
@@ -77,6 +77,9 @@ const initialContext: SessionContext = {
 export const sessionContext = createContext<SessionContext>(initialContext);
 
 type SessionAction = {
+  type: 'UPDATE_STATE';
+  payload: SessionContext;
+} | {
   type: 'SET_CART';
   payload: Cart;
 } | {
@@ -84,16 +87,24 @@ type SessionAction = {
   payload: Customer;
 } | {
   type: 'SET_AUTH_URLS';
-  payload: { addPaymentMethodUrl: string; };
-} | {
-  type: 'SET_SESSION_META';
-  payload: SessionMeta;
+  payload: {
+    cartUrl: string;
+    checkoutUrl: string;
+    accountUrl: string;
+  };
 } | {
   type: 'LOGOUT';
+} | {
+  type: 'URLS_EXPIRED';
 };
 
 const reducer = (state: SessionContext, action: SessionAction): SessionContext => {
   switch (action.type) {
+    case 'UPDATE_STATE':
+      return {
+        ...state,
+        ...action.payload,
+      };
     case 'SET_CART':
       return {
         ...state,
@@ -108,17 +119,18 @@ const reducer = (state: SessionContext, action: SessionAction): SessionContext =
       return {
         ...state,
         ...action.payload,
+        urlsExpired: false,
       };
-    case 'SET_SESSION_META':
+    case 'URLS_EXPIRED':
       return {
         ...state,
-        sessionMeta: action.payload,
+        urlsExpired: true,
       };
     case 'LOGOUT':
       return {
         ...state,
         customer: null,
-        sessionMeta: null,
+        cart: null,
       };
     default:
       throw new Error('Invalid action dispatched to session data reducer');
@@ -183,57 +195,58 @@ const cartItemSearch = (
 const { Provider } = sessionContext;
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  const [fetching, setFetching] = useState(false);
   const { toast } = useToast();
   const [state, dispatch] = useReducer(reducer, initialContext);
 
-  // Delete logout state and creds store locally.
-  const logout = () => {
-    dispatch({ type: 'LOGOUT' });
-    deleteCredentials();
+  const fetchAuthURLs = () => {
+    return fetchAuthURLsApiCall()
+      .then((payload) => {
+        if (typeof payload === 'string') {
+          toast({
+            title: 'Session Error',
+            description: 'Failed to generate session URLs. Please refresh the page.',
+            variant: 'destructive'
+          });
+
+          return false;
+        }
+        
+        dispatch({
+          type: 'UPDATE_STATE',
+          payload: { ...payload, fetching: false } as SessionContext,
+        });
+        return true;
+      });
   };
 
   // Process session fetch request response.
-  const setSession = (session: Session|string) => {
+  const setSession = (session: Session|string, authUrls: AuthUrls|string) => {
     if (typeof session === 'string') {
       toast({
         title: 'Fetch Session Error',
         description: 'Failed to fetch session.',
         variant: 'destructive'
       });
-      setFetching(false);
+    }
+    if (typeof authUrls === 'string') {
+      toast({
+        title: 'Session Error',
+        description: 'Failed to generate session URLs. Please refresh the page.',
+        variant: 'destructive'
+      });
+    }
+
+    if (typeof session === 'string' || typeof authUrls === 'string') {
+      dispatch({
+        type: 'UPDATE_STATE',
+        payload: { fetching: false } as SessionContext,
+      });
       return false;
     }
 
-    const { customer, cart } = session;
-    fetchAuthURLs()
-    .then((payload) => {
-      dispatch({
-        type: 'SET_CART',
-        payload: cart,
-      });
-
-      dispatch({
-        type: 'SET_CUSTOMER',
-        payload: customer,
-      });
-
-      if (typeof payload === 'string') {
-        toast({
-          title: 'Login Error',
-          description: 'Failed to generate Auth URLs for checkout. Please refresh the page.',
-          variant: 'destructive'
-        });
-      } else {
-        dispatch({
-          type: 'SET_AUTH_URLS',
-          payload,
-        });
-      }
-
-      setFetching(false);
-
-      return true;
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { ...session, ...authUrls, fetching: false } as SessionContext,
     });
 
     return true;
@@ -257,39 +270,17 @@ export function SessionProvider({ children }: PropsWithChildren) {
       }
 
       hasCredentials() && logout();
-      setFetching(false);
+      dispatch({
+        type: 'UPDATE_STATE',
+        payload: { fetching: false } as SessionContext,
+      });
       return false;
     }
 
-    fetchAuthURLs()
-      .then((payload) => {
-        dispatch({
-          type: 'SET_CUSTOMER',
-          payload: customer,
-        });
-
-        dispatch({
-          type: 'SET_SESSION_META',
-          payload: getSessionMeta() as SessionMeta,
-        });
-
-        if (typeof payload === 'string') {
-          toast({
-            title: 'Login Error',
-            description: 'Failed to generate Auth URLs for checkout. Please refresh the page.',
-            variant: 'destructive'
-          });
-        } else {
-          dispatch({
-            type: 'SET_AUTH_URLS',
-            payload,
-          });
-        }
-
-        setFetching(false);
-
-        return true;
-      });
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { customer, fetching: false } as SessionContext,
+    });
 
     return true;
   };
@@ -303,54 +294,50 @@ export function SessionProvider({ children }: PropsWithChildren) {
         variant: 'destructive'
       });
 
-      setFetching(false);
+      dispatch({
+        type: 'UPDATE_STATE',
+        payload: { fetching: false } as SessionContext,
+      });
       return false;
     }
 
-    fetchAuthURLs()
-      .then((payload) => {
-        dispatch({
-          type: 'SET_CART',
-          payload: cart,
-        });
-
-        if (typeof payload === 'string') {
-          toast({
-            title: 'Cart Action Error',
-            description: 'Failed to generate Auth URLs for cart. Please refresh the page.',
-            variant: 'destructive'
-          });
-        } else {
-          dispatch({
-            type: 'SET_AUTH_URLS',
-            payload,
-          });
-        }
-
-        setFetching(false);
-
-        return true;
-      });
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { cart, fetching: false } as SessionContext,
+    });
 
     return true;
   };
 
   // Fetch customer data.
   const fetchSession = () => {
-    setFetching(true);
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { fetching: true } as SessionContext,
+    });
+
     return getSessionApiCall()
-      .then(setSession);
+      .then(async (sessionPayload) => {
+        const authUrlPayload = await fetchAuthURLsApiCall();
+        return setSession(sessionPayload, authUrlPayload);
+      });
   };
 
   // Update customer data.
   const updateCustomer = (input: UpdateCustomerInput) => {
-    setFetching(true);
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { fetching: true } as SessionContext,
+    });
     return updateCustomerApiCall(input)
       .then(setCustomer);
   };
 
   const login = (username: string, password: string) => {
-    setFetching(true);
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { fetching: true } as SessionContext,
+    });
     return loginApiCall(username, password)
       .then((success) => {
         if (typeof success === 'string') {
@@ -359,6 +346,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
             description: success,
             variant: 'destructive'
           });
+          dispatch({
+            type: 'UPDATE_STATE',
+            payload: { fetching: false } as SessionContext,
+          });
           return false;
         }
         
@@ -366,11 +357,25 @@ export function SessionProvider({ children }: PropsWithChildren) {
     });
   };
 
+  // Delete logout state and creds store locally.
+  const logout = () => {
+    dispatch({ type: 'LOGOUT' });
+    deleteCredentials();
+    deleteClientCredentials();
+    fetchSession();
+  };
+
   const sendPasswordReset = (username: string) => {
-    setFetching(true);
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { fetching: true } as SessionContext,
+    });
     return sendPasswordResetApiCall(username)
       .then((success) => {
-        setFetching(false);
+        dispatch({
+          type: 'UPDATE_STATE',
+          payload: { fetching: false } as SessionContext,
+        });
         if (typeof success === 'string') {
           toast({
             title: 'Password Reset Error',
@@ -380,12 +385,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
           return false;
         }
+
         return success;
       });
   };
 
   const updateCart = (action: CartAction) => {
-    setFetching(true);
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { fetching: true } as SessionContext,
+    });
     return updateCartApiCall(action)
       .then(setCart);
   };
@@ -396,23 +405,32 @@ export function SessionProvider({ children }: PropsWithChildren) {
       return undefined;
     }
     return items.find(cartItemSearch(productId, variationId, extraData, true)) || undefined;
-  };    
+  };
+
+  const refetchUrls = () => {
+    deleteClientSessionId();
+    dispatch({
+      type: 'UPDATE_STATE',
+      payload: { urlsExpired: true, fetching: true } as SessionContext,
+    });
+    fetchAuthURLs();
+  };
 
   useEffect(() => {
-    if (isSSR() || fetching) {
+    if (isSSR() || state.fetching) {
       return;
     }
-
     if (!state.customer || !state.cart) {
       fetchSession();
     }
-  });
+  
+  }, []);
+      
 
   const store: SessionContext = {
     ...state,
-    isAuthenticated: !!state.customer?.id,
+    isAuthenticated: !!state.customer?.id && 'guest' !== state.customer.id,
     hasCredentials: (!isSSR() && hasCredentials()) || false,
-    fetching,
     logout,
     updateCustomer,
     updateCart,
@@ -420,6 +438,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     findInCart,
     login,
     sendPasswordReset,
+    refetchUrls,
   };
   return (
     <Provider value={store}>{children}</Provider>

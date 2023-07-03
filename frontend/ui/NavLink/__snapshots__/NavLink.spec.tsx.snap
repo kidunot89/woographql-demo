@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavLink component should match snapshot 1`] = `
+<body>
+  <div>
+    <a
+      class="transition-colors group-hover:text-blue-400"
+      href="/test"
+    >
+      Test Link
+    </a>
+  </div>
+</body>
+`;

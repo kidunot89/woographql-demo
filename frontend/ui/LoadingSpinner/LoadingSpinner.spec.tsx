@@ -1,17 +1,33 @@
-import React from 'react';
-import '@testing-library/react/dont-cleanup-after-each';
-
-import { render, cleanup } from '@woographql/testing';
+import { render, screen } from '@woographql/testing';
 import { LoadingSpinner } from '.';
 
 describe('LoadingSpinner component', () => {
-  afterAll(() => cleanup());
+  it('renders correctly with default props', () => {
+    render(<LoadingSpinner />);
 
-  const { baseElement } = render(
-    <LoadingSpinner />,
-  );
+    // Check that the spinner is rendered
+    const spinner = screen.getByRole('status', { name: 'Loading...' });
+    expect(spinner).toBeInTheDocument();
 
-  it('should render mount successfully', () => {
+    // Check that the loading text is rendered
+    const loadingText = screen.getByText('Loading...');
+    expect(loadingText).toBeInTheDocument();
+  });
+
+  it('renders correctly with noText prop', () => {
+    render(<LoadingSpinner noText />);
+
+    // Check that the spinner is rendered
+    const spinner = screen.getByRole('status', { name: 'Loading...' });
+    expect(spinner).toBeInTheDocument();
+
+    // Check that the loading text is not rendered
+    const loadingText = screen.queryByText('Loading...');
+    expect(loadingText).not.toBeInTheDocument();
+  });
+
+  it('should match snapshot', () => {
+    const { baseElement } = render(<LoadingSpinner />);
     expect(baseElement).toMatchSnapshot();
   });
 });

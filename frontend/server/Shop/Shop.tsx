@@ -8,11 +8,11 @@ import { PaColorPicker } from '@woographql/client/PaColorPicker';
 import { SearchBar } from '@woographql/client/SearchBar';
 import { ProductListing } from '@woographql/client/ProductListing';
 import { PriceRange } from '@woographql/client/PriceRange';
-import { ShopSidebar } from '@woographql/client/ShopSidebar';
+import { ShopSidebar } from '@woographql/server/ShopSidebar';
 
 export interface ShopProps {
   products: Product[];
-  categories: ProductCategory[];
+  categories?: ProductCategory[];
   colors: PaColor[];
 }
 
@@ -26,8 +26,12 @@ export function Shop(props: ShopProps) {
   return (
     <div className="w-full flex max-w-screen-lg mx-auto">
       <ShopSidebar>
-        <p className="font-serif text-lg font-bold mb-2">Categories</p>
-        <ShopCategories categories={categories} />
+        {categories && (
+          <>
+            <p className="font-serif text-lg font-bold mb-2">Categories</p>
+            <ShopCategories categories={categories} />
+          </>
+        )}
         <p className="font-serif text-lg font-bold mb-2">Colors</p>
         <PaColorPicker colors={colors} />
         <p className="font-serif text-lg font-bold mb-2">Price</p>

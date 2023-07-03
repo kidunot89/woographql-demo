@@ -12,25 +12,22 @@ export function PriceRange() {
   const {
     globalMax,
     globalMin,
-    priceRange,
     setPriceRange,
   } = useShopContext();
 
   useEffect(() => {
-    setMin(globalMin);
-    setMax(globalMax);
-  }, []);
-
-  useEffect(() => {
-      setMin(priceRange[0]);
-      setMax(priceRange[1] || globalMax);
-  }, [priceRange]);
+    setPriceRange([globalMin, globalMax]);
+  }, [globalMin, globalMax]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setPriceRange(debouncedRange);
+      setDebouncedRange([min, max]);
     }, 500);
     return () => clearTimeout(timeout);
+  }, [min, max]);
+
+  useEffect(() => {
+    setPriceRange(debouncedRange);
   }, [debouncedRange]);
 
   return (
@@ -43,7 +40,7 @@ export function PriceRange() {
         type="number"
         onChange={(event) => {
           const value = Number(event.target.value);
-          setDebouncedRange([value, max]);
+          setMin(value);
         }}
       />
       <Input
@@ -54,7 +51,7 @@ export function PriceRange() {
         type="number"
         onChange={(event) => {
           const value = Number(event.target.value);
-          setDebouncedRange([min, value]);
+          setMax(value);
         }}
       />
       <Slider
@@ -63,10 +60,12 @@ export function PriceRange() {
         defaultValue={[globalMin, globalMax]}
         step={1}
         onValueChange={(values: [number, number]) => {
-          if (values !== debouncedRange) {
-            setDebouncedRange(values as [number, number]);
+          if (values[0] !== min) {
+            setMin(values[0]);
           }
-          
+          if (values[1] !== max) {
+            setMax(values[1]);
+          }
         }}
       />
     </div>

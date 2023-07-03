@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Image component should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="overflow-hidden group relative"
+    >
+      <div
+        data-radix-aspect-ratio-wrapper=""
+        style="position: relative; width: 100%; padding-bottom: 100%;"
+      >
+        <div
+          style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px;"
+        >
+          <div
+            aria-label="Loading..."
+            class="relative flex items-center justify-center space-x-2 position absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            role="status"
+          >
+            <svg
+              class="h-6 w-6 animate-spin stroke-amber-600"
+              viewBox="0 0 256 256"
+            >
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="128"
+                x2="128"
+                y1="32"
+                y2="64"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="195.9"
+                x2="173.3"
+                y1="60.1"
+                y2="82.7"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="224"
+                x2="192"
+                y1="128"
+                y2="128"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="195.9"
+                x2="173.3"
+                y1="195.9"
+                y2="173.3"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="128"
+                x2="128"
+                y1="224"
+                y2="192"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="60.1"
+                x2="82.7"
+                y1="195.9"
+                y2="173.3"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="32"
+                x2="64"
+                y1="128"
+                y2="128"
+              />
+              <line
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="24"
+                x1="60.1"
+                x2="82.7"
+                y1="60.1"
+                y2="82.7"
+              />
+            </svg>
+            <span
+              class="text-xs font-medium text-gray-500"
+            >
+              Loading...
+            </span>
+          </div>
+          <img
+            alt="Example Image"
+            class="group-hover:opacity-75 object-cover duration-700 ease-in-out grayscale blur-2xl scale-110"
+            height="500"
+            src="https://example.com/image.jpg"
+            width="500"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

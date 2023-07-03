@@ -53,8 +53,6 @@ const getNodeText = (node: React.ReactNode[]|React.ReactNode): React.ReactNode|s
   return undefined;
 };
 
-jest.mock('uuid', () => ({ v4: () => 'test' }));
-
 jest.mock('next/image', () => ({
   __esModule: true,
   // eslint-disable-next-line jsx-a11y/alt-text

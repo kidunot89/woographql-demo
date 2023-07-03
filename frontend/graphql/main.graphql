@@ -30,6 +30,7 @@ fragment MenuContent on Menu {
 fragment CustomerContent on Customer {
   id
   sessionToken
+  firstName
   shipping {
     postcode
     state
@@ -190,6 +191,14 @@ fragment ProductContentFull on Product {
     stockStatus
     stockQuantity
     soldIndividually
+    defaultAttributes(first: 100) {
+      nodes {
+        id
+        attributeId
+        name
+        value
+      }
+    }
   }
   ... on VariableProduct {
     onSale
@@ -476,8 +485,8 @@ query GetAllProductSlugs($first: Int, $after: String, $where: RootQueryToProduct
   }
 }
 
-query GetShopCategories($first: Int, $after: String) {
-  productCategories(first: $first, after: $after, where: {hideEmpty: true}) {
+query GetShopCategories($first: Int, $after: String, $where: RootQueryToProductCategoryConnectionWhereArgs) {
+  productCategories(first: $first, after: $after, where: $where) {
     pageInfo {
       hasNextPage
       endCursor
@@ -497,8 +506,8 @@ query GetShopCategories($first: Int, $after: String) {
   }
 }
 
-query GetShopTags($first: Int, $after: String) {
-  productTags(first: $first, after: $after) {
+query GetShopTags($first: Int, $after: String, $where: RootQueryToProductTagConnectionWhereArgs) {
+  productTags(first: $first, after: $after, where: $where) {
     pageInfo {
       hasNextPage
       endCursor
@@ -518,8 +527,8 @@ query GetShopTags($first: Int, $after: String) {
   }
 }
 
-query GetShopColors($first: Int, $after: String) {
-  allPaColor(first: $first, after: $after) {
+query GetShopColors($first: Int, $after: String, $where: RootQueryToPaColorConnectionWhereArgs) {
+  allPaColor(first: $first, after: $after, where: $where) {
     pageInfo {
       hasNextPage
       endCursor

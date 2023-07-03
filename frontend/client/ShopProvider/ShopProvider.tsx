@@ -29,14 +29,17 @@ export interface ShopContext {
   selectedCategories: string[];
   addCategory: (category: string) => void;
   removeCategory: (category: string) => void;
+  clearCategories: () => void;
   selectedColors: string[];
   addColor: (color: string) => void;
   removeColor: (color: string) => void;
+  clearColors: () => void;
   priceRange: [number, number|null];
   setPriceRange: (priceRange: [number|null, number|null]) => void;
   globalMin: number;
   globalMax: number;
-  products: Product[];
+  products: Product[]|null;
+  allProducts: Product[]|null;
 }
 
 export type ShopAction =
@@ -44,8 +47,10 @@ export type ShopAction =
   | { type: 'SET_CATEGORIES', payload: string[] }
   | { type: 'ADD_CATEGORY', payload: string }
   | { type: 'REMOVE_CATEGORY', payload: string }
+  | { type: 'CLEAR_CATEGORIES' }
   | { type: 'SET_COLORS', payload: string[] }
   | { type: 'ADD_COLOR', payload: string }
+  | { type: 'CLEAR_COLORS' }
   | { type: 'REMOVE_COLOR', payload: string }
   | { type: 'SET_PRICE_RANGE', payload: [number|null, number|null] }
 
@@ -55,14 +60,17 @@ const initialState: ShopContext = {
   selectedCategories: [],
   addCategory: () => {},
   removeCategory: () => {},
+  clearCategories: () => {},
   selectedColors: [],
   addColor: () => {},
   removeColor: () => {},
+  clearColors: () => {},
   priceRange: [0, null],
   setPriceRange: () => {},
   globalMin: 0,
   globalMax: 100,
-  products: [],
+  products: null,
+  allProducts: null,
 };
 
 const shopContext = createContext<ShopContext>(initialState);
@@ -81,12 +89,16 @@ const reducer = (state: ShopContext, action: ShopAction): ShopContext => {
       return { ...state, selectedCategories: [...state.selectedCategories, action.payload] };
     case 'REMOVE_CATEGORY':
       return { ...state, selectedCategories: state.selectedCategories.filter((category) => category !== action.payload) };
+    case 'CLEAR_CATEGORIES':
+      return { ...state, selectedCategories: [] };
     case 'SET_COLORS':
       return { ...state, selectedColors: action.payload };
     case 'ADD_COLOR':
       return { ...state, selectedColors: [...state.selectedColors, action.payload] };
     case 'REMOVE_COLOR':
       return { ...state, selectedColors: state.selectedColors.filter((color) => color !== action.payload) };
+    case 'CLEAR_COLORS':
+      return { ...state, selectedColors: [] };
     case 'SET_PRICE_RANGE':
       const [min, max] = action.payload;
       if (min === null) {
@@ -183,7 +195,12 @@ function filterProducts(products: Product[], state: ShopContext) {
     });
   }
 
-  return { products: filteredProducts, globalMin, globalMax };
+  return {
+    allProducts: products,
+    products: filteredProducts,
+    globalMin,
+    globalMax
+  };
 }
 
 
@@ -242,8 +259,10 @@ export function ShopProvider({ allProducts, children }: PropsWithChildren<ShopPr
     setSearch: (search: string) => dispatch({ type: 'SET_SEARCH', payload: search }),
     addCategory: (category: string) => dispatch({ type: 'ADD_CATEGORY', payload: category }),
     removeCategory: (category: string) => dispatch({ type: 'REMOVE_CATEGORY', payload: category }),
+    clearCategories: () => dispatch({ type: 'CLEAR_CATEGORIES' }),
     addColor: (color: string) => dispatch({ type: 'ADD_COLOR', payload: color }),
     removeColor: (color: string) => dispatch({ type: 'REMOVE_COLOR', payload: color }),
+    clearColors: () => dispatch({ type: 'CLEAR_COLORS' }),
     setPriceRange: (priceRange: [number|null, number|null]) => dispatch({ type: 'SET_PRICE_RANGE', payload: priceRange }),
     ...filterProducts(allProducts, state),
   };

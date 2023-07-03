@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingSpinner component should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      aria-label="Loading..."
+      class="relative flex items-center justify-center space-x-2 "
+      role="status"
+    >
+      <svg
+        class="h-6 w-6 animate-spin stroke-amber-600"
+        viewBox="0 0 256 256"
+      >
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="128"
+          x2="128"
+          y1="32"
+          y2="64"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="195.9"
+          x2="173.3"
+          y1="60.1"
+          y2="82.7"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="224"
+          x2="192"
+          y1="128"
+          y2="128"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="195.9"
+          x2="173.3"
+          y1="195.9"
+          y2="173.3"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="128"
+          x2="128"
+          y1="224"
+          y2="192"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="60.1"
+          x2="82.7"
+          y1="195.9"
+          y2="173.3"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="32"
+          x2="64"
+          y1="128"
+          y2="128"
+        />
+        <line
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="24"
+          x1="60.1"
+          x2="82.7"
+          y1="60.1"
+          y2="82.7"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium text-gray-500"
+      >
+        Loading...
+      </span>
+    </div>
+  </div>
+</body>
+`;

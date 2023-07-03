@@ -64,12 +64,16 @@ function getNonceParam(action: ActionTypes) {
 type DecodedToken = {
   data: { customer_id: string };
 }
-export function generateUrl(sessionToken:string, clientSessionId:string, actionType: ActionTypes) {
+export function getUidFromToken(sessionToken: string) {
   const decodedToken = jwtDecode<DecodedToken>(sessionToken);
   if (!decodedToken?.data?.customer_id) {
     throw new Error('Failed to decode session token');
   }
-  const uId = decodedToken.data.customer_id;
+  return decodedToken.data.customer_id;
+}
+
+export function generateUrl(sessionToken:string, clientSessionId:string, actionType: ActionTypes) {
+  const uId = getUidFromToken(sessionToken);
   const action = getAction(actionType, uId);
 
   // Create nonce
@@ -77,7 +81,7 @@ export function generateUrl(sessionToken:string, clientSessionId:string, actionT
 
   // Create URL.
   const param = getNonceParam(actionType);
-  let url = `${process.env.SHOP_BACKEND_URL}/wp/transfer-session?session_id=${uId}&${param}=${nonce}`;
+  let url = `${process.env.BACKEND_URL}/wp/transfer-session?session_id=${uId}&${param}=${nonce}`;
 
   return url;
 }

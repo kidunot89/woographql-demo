@@ -62,5 +62,3 @@ export function Image(props: ImageProps) {
     </div>
   );
 }
-
-export default Image;

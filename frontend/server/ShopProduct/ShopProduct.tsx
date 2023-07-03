@@ -1,13 +1,13 @@
 import { Product, SimpleProduct, VariationAttribute } from '@woographql/graphql';
-import { CartOptions } from '@woographql/client/CartOptions';
+import { CartOptions } from '@woographql/server/CartOptions';
+import { ProductProvider } from '@woographql/client/ProductProvider';
+import { ProductImage } from '@woographql/client/ProductImage';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@woographql/ui/tabs';
-import { ProductProvider } from '@woographql/client/ProductProvider';
-import { ProductImage } from '@woographql/client/ProductImage';
 
 export interface ShopProductProps {
   product: Product;

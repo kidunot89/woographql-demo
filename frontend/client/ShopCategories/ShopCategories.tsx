@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import { ProductCategory } from '@woographql/graphql';
 
 import { useShopContext } from '@woographql/client/ShopProvider';
@@ -27,6 +25,7 @@ export function ShopCategories({ categories }: ShopCategoriesProps) {
           }
           return (
             <Badge
+              key={category.id}
               variant="outline"
               onClick={() => removeCategory(slug)}
               className={cn(

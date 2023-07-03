@@ -6,6 +6,7 @@ import {
   act,
 } from '@testing-library/react';
 import { queries, Queries } from '@testing-library/dom';
+import ResizeObserver from 'resize-observer-polyfill'
 
 function AllTheProviders({ children }: PropsWithChildren<unknown>) {
   return (
@@ -33,3 +34,10 @@ export const whenStable = async () => act(async () => {
 
 export * from '@testing-library/react';
 export { customRender as render };
+global.ResizeObserver = ResizeObserver;
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+}));
