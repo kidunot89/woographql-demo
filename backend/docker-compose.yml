@@ -24,7 +24,6 @@ services:
     volumes:
       - ./:/app
       - ./bin/php.ini:/usr/local/etc/php/php.ini
-      - ../../wp-graphql-woocommerce:/app/web/app/plugins/wp-graphql-woocommerce
     environment:
       - DB_HOST=db:3306
       - DB_USER=wordpress

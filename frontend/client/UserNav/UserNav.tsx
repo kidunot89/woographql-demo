@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@woographql/client/SessionProvider';
 import { NavLink, linkClassName } from '@woographql/ui/NavLink';
 import { Button } from '@woographql/ui/button';
+import { useCallback } from 'react';
 
 export function UserNav() {
   const { push } = useRouter();
@@ -19,28 +20,32 @@ export function UserNav() {
     fetching,
   } = useSession();
 
-  const goToCart = () => {
+  console.log('cart', cartUrl);
+  console.log('account', accountUrl);
+  console.log('checkout', checkoutUrl);
+
+  const goToCart = useCallback(() => {
     const CartUrlToBeUsed = cartUrl;
     refetchUrls();
     push(CartUrlToBeUsed);
-  };
+  }, [cartUrl, refetchUrls]);
 
-  const goToCheckout = () => {
+  const goToCheckout = useCallback(() => {
     const CheckoutUrlToBeUsed = checkoutUrl;
     refetchUrls();
     push(CheckoutUrlToBeUsed);
-  };
+  }, [checkoutUrl, refetchUrls]);
 
-  const goToAccount = () => {
+  const goToAccount = useCallback(() => {
     const AccountUrlToBeUsed = accountUrl;
     refetchUrls();
     push(AccountUrlToBeUsed);
-  };
+  }, [accountUrl, refetchUrls]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     killSession(`Goodbye, ${customer?.firstName}`);
     refetchUrls();
-  }
+  }, [customer, killSession, refetchUrls]);
 
   return (
     <>

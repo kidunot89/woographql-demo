@@ -26,6 +26,7 @@ import {
   sendPasswordReset as sendPasswordResetApiCall,
   updateCart as updateCartApiCall,
   CartAction,
+  hasRefreshToken,
 } from '@woographql/utils/session';
 import {
   deleteClientSessionId,
@@ -420,6 +421,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     if (isSSR() || state.fetching) {
       return;
     }
+
+    if (hasRefreshToken() && !hasCredentials()) {
+      return;
+    }
+
     if (!state.customer || !state.cart) {
       fetchSession();
     }

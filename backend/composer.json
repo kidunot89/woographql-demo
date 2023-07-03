@@ -44,7 +44,7 @@
     "wpackagist-plugin/woocommerce": "*",
     "wpackagist-plugin/woocommerce-gateway-stripe": "*",
     "wpackagist-plugin/wp-graphql": "*",
-    "wp-graphql/wp-graphql-woocommerce": "^0.14.0",
+    "wp-graphql/wp-graphql-woocommerce": "^0.14.1",
     "wp-graphql/wp-graphql-jwt-authentication": "^0.7.0"
   },
   "require-dev": {

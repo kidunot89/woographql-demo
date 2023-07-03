@@ -7,6 +7,7 @@ import {
 } from '@woographql/graphql';
 import { isSSR } from '@woographql/utils/ssr';
 import { getClientSessionId } from '@woographql/utils/client';
+import { MINUTE_IN_SECONDS, time } from '@woographql/utils/nonce';
 
 
 export const isDev = () => !!process.env.WEBPACK_DEV_SERVER;
@@ -75,6 +76,18 @@ export function hasCredentials() {
   return false;
 }
 
+function setAuthTokenExpiry() {
+  const authTimeout = time() + (15 * MINUTE_IN_SECONDS);
+  sessionStorage.setItem(process.env.AUTH_TOKEN_EXPIRY_SS_KEY as string, `${authTimeout}`);
+}
+
+function authTokenIsExpired() {
+  const authTimeout = sessionStorage.getItem(process.env.AUTH_TOKEN_EXPIRY_SS_KEY as string);
+  if (!authTimeout || Number(authTimeout) < time()) {
+    return true;
+  }
+}
+
 type FetchAuthTokenResponse = {
   authToken: string;
   sessionToken: string;
@@ -98,6 +111,7 @@ async function fetchAuthToken() {
 
   const { authToken, sessionToken } = json;
   saveCredentials(authToken, sessionToken);
+  setAuthTokenExpiry();
 
   return authToken;
 }
@@ -169,7 +183,7 @@ export async function sendPasswordReset(username: string): Promise<boolean|strin
 
 export async function getAuthToken() {
   let authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
-  if (!authToken) {
+  if (!authToken || authTokenIsExpired()) {
     authToken = await fetchAuthToken();
   }
 
