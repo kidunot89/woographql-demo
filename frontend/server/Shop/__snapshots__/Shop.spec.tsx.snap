@@ -202,7 +202,9 @@ exports[`Shop component should match snapshot 1`] = `
         >
           Showing 
           4
-           products
+           of 
+          4
+           items
         </p>
         <div
           class="flex flex-wrap justify-center md:justify-start gap-4"
@@ -211,26 +213,26 @@ exports[`Shop component should match snapshot 1`] = `
             href="/product/t-shirt"
           >
             <div
-              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+              class="rounded-xl border bg-card text-card-foreground shadow w-44 md:w-36"
             >
               <div
-                class="flex flex-col space-y-1.5 p-6"
+                class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
                 >
                   T Shirt
                 </h3>
               </div>
               <div
-                class="p-6 pt-0"
+                class="p-4"
               >
                 <p
-                  class="text-sm"
+                  class="text-sm truncate"
                 />
               </div>
               <div
-                class="flex items-center p-6 pt-0"
+                class="flex items-center p-4"
               >
                 <p
                   class="font-serif font-bold"
@@ -244,26 +246,26 @@ exports[`Shop component should match snapshot 1`] = `
             href="/product/belt"
           >
             <div
-              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+              class="rounded-xl border bg-card text-card-foreground shadow w-44 md:w-36"
             >
               <div
-                class="flex flex-col space-y-1.5 p-6"
+                class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
                 >
                   Belt
                 </h3>
               </div>
               <div
-                class="p-6 pt-0"
+                class="p-4"
               >
                 <p
-                  class="text-sm"
+                  class="text-sm truncate"
                 />
               </div>
               <div
-                class="flex items-center p-6 pt-0"
+                class="flex items-center p-4"
               >
                 <p
                   class="font-serif font-bold"
@@ -277,26 +279,26 @@ exports[`Shop component should match snapshot 1`] = `
             href="/product/shoes"
           >
             <div
-              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+              class="rounded-xl border bg-card text-card-foreground shadow w-44 md:w-36"
             >
               <div
-                class="flex flex-col space-y-1.5 p-6"
+                class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
                 >
                   Shoes
                 </h3>
               </div>
               <div
-                class="p-6 pt-0"
+                class="p-4"
               >
                 <p
-                  class="text-sm"
+                  class="text-sm truncate"
                 />
               </div>
               <div
-                class="flex items-center p-6 pt-0"
+                class="flex items-center p-4"
               >
                 <p
                   class="font-serif font-bold"
@@ -310,26 +312,26 @@ exports[`Shop component should match snapshot 1`] = `
             href="/product/hat"
           >
             <div
-              class="rounded-xl border bg-card text-card-foreground shadow w-56 md:w-44"
+              class="rounded-xl border bg-card text-card-foreground shadow w-44 md:w-36"
             >
               <div
-                class="flex flex-col space-y-1.5 p-6"
+                class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
                 >
                   Hat
                 </h3>
               </div>
               <div
-                class="p-6 pt-0"
+                class="p-4"
               >
                 <p
-                  class="text-sm"
+                  class="text-sm truncate"
                 />
               </div>
               <div
-                class="flex items-center p-6 pt-0"
+                class="flex items-center p-4"
               >
                 <p
                   class="font-serif font-bold"
@@ -339,6 +341,32 @@ exports[`Shop component should match snapshot 1`] = `
               </div>
             </div>
           </a>
+        </div>
+        <div
+          class="flex justify-center my-4 gap-x-2 text-sms"
+        >
+          <button
+            aria-label="Previous page"
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+            disabled=""
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-chevron-left"
+            />
+          </button>
+          <button
+            aria-label="Next page"
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+            disabled=""
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-chevron-right"
+            />
+          </button>
         </div>
       </div>
     </div>

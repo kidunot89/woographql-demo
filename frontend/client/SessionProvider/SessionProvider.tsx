@@ -12,6 +12,7 @@ import {
   Cart,
   CartItem,
   MetaData,
+  VariationAttribute,
 } from '@woographql/graphql';
 import { isSSR } from '@woographql/utils/ssr';
 import {
@@ -52,7 +53,15 @@ export interface SessionContext {
   sendPasswordReset: (username: string, successMessage?: string) => Promise<boolean>;
   updateCart: (action: CartAction) => Promise<boolean>;
   refetch: () => Promise<boolean>;
-  findInCart: (productId: number, variationId?: number, extraData?: string) => CartItem|undefined;
+  findInCart: (
+    productId: number,
+    variationId?: number,
+    variation?: {
+      attributeName: string;
+      attributeValue: string;
+    }[],
+    extraData?: string,
+  ) => CartItem|undefined;
 }
 
 const initialContext: SessionContext = {
@@ -72,7 +81,15 @@ const initialContext: SessionContext = {
   sendPasswordReset: (username: string) => new Promise((resolve) => { resolve(false); }),
   updateCart: (action: CartAction) => new Promise((resolve) => { resolve(false); }),
   refetch: () => new Promise((resolve) => { resolve(false); }),
-  findInCart: (productId: number, variationId?: number, extraData?: string) => undefined,
+  findInCart: (
+    productId: number,
+    variationId?: number,
+    variation?: {
+      attributeName: string;
+      attributeValue: string;
+    }[],
+    extraData?: string,
+  ) => undefined,
 };
 
 export const sessionContext = createContext<SessionContext>(initialContext);
@@ -149,6 +166,10 @@ const reducer = (state: SessionContext, action: SessionAction): SessionContext =
 const cartItemSearch = (
   productId: number,
   variationId?: number,
+  variationData?: {
+    attributeName: string;
+    attributeValue: string;
+  }[],
   extraData?: string,
   skipMeta = false,
 ) => ({
@@ -166,6 +187,21 @@ const cartItemSearch = (
       && variationId !== variation.node.databaseId
   ) {
     return false;
+  }
+  
+  if (variationData?.length && !variation?.attributes?.length) {
+    return false;
+  }
+
+  if (variationData?.length && variation?.attributes?.length) {
+    const variationAttributes = variation.attributes as VariationAttribute[];
+    const found = variationData
+      .filter(({ attributeName, attributeValue }) => !!variationAttributes?.find(
+        ({ label, value }) => (label as string).toLowerCase() === attributeName && value === attributeValue,
+      ))
+      .length;
+    
+    if (!found) return false;
   }
 
   if (skipMeta) {
@@ -400,12 +436,19 @@ export function SessionProvider({ children }: PropsWithChildren) {
       .then(setCart);
   };
 
-  const findInCart = (productId: number, variationId?: number, extraData?: string) => {
+  const findInCart = (
+    productId: number,
+    variationId?: number,
+    variation?: {
+      attributeName: string;
+      attributeValue: string;
+    }[],
+    extraData?: string) => {
     const items = state?.cart?.contents?.nodes as CartItem[];
     if (!items) {
       return undefined;
     }
-    return items.find(cartItemSearch(productId, variationId, extraData, true)) || undefined;
+    return items.find(cartItemSearch(productId, variationId, variation, extraData, true)) || undefined;
   };
 
   const refetchUrls = () => {
@@ -419,10 +462,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (isSSR() || state.fetching) {
-      return;
-    }
-
-    if (hasRefreshToken() && !hasCredentials()) {
       return;
     }
 

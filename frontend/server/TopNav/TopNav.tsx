@@ -14,8 +14,8 @@ export interface TopNavProps {
 
 export function TopNav({ menu }: TopNavProps) {
   return (
-    <nav className="w-full bg-white h-36 py-4 px-4">
-      <ul className="max-w-screen-lg mx-auto w-full flex flex-row gap-x-4 justify-end items-center">
+    <nav className="w-full bg-white min-h-24 py-4 px-4">
+      <ul className="max-w-screen-lg m-auto w-full flex flex-row gap-x-4 justify-end items-center">
         <Logo className="mr-auto" />
         {menu.map((item, i) => (
           <li key={i} className="group">

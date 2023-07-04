@@ -1,5 +1,3 @@
-import { Inter } from 'next/font/google';
-
 import {
   OrderEnum,
   TermObjectsConnectionOrderbyEnum,
@@ -15,9 +13,15 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css';
 import '@fortawesome/fontawesome-free/css/brands.css';
 import '@fortawesome/fontawesome-free/css/solid.css';
 
-import './globals.css';
+/* Google Fonts */
+import '@fontsource/sansita/900.css';
+import '@fontsource/sansita/700.css';
+import '@fontsource/sansita/400.css';
+import '@fontsource/sansita/400-italic.css';
+import '@fontsource/padauk/400.css';
+import '@fontsource/padauk/700.css';
 
-const inter = Inter({ subsets: ['latin'] })
+import './globals.css';
 
 export const metadata = {
   title: 'Create Next App',
@@ -49,7 +53,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <SessionProvider>
           <TopNav menu={menu} />
           <main className="w-full">

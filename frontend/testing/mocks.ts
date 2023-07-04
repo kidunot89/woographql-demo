@@ -273,6 +273,17 @@ export const mockedProducts: Product[] = [
     },
     __typename: 'SimpleProduct',
     price: '$10',
+    allPaColor: {
+      nodes: [
+        {
+          id: '1',
+          databaseId: 1,
+          name: 'Red',
+          slug: 'red',
+        },
+      ],
+    },
+
   } as SimpleProduct,
   {
     id: '2',
@@ -285,5 +296,48 @@ export const mockedProducts: Product[] = [
     },
     __typename: 'SimpleProduct',
     price: '$20',
+    allPaColor: {
+      nodes: [
+        {
+          id: '3',
+          databaseId: 3,
+          name: 'Green',
+          slug: 'green',
+        },
+      ],
+    },
+  } as SimpleProduct,
+  {
+    id: '3',
+    name: 'Product 3',
+    slug: 'product-3',
+    shortDescription: 'This is product 3',
+    image: {
+      sourceUrl: 'http://example.com/product-3.jpg',
+      altText: 'Product 3',
+    },
+    __typename: 'SimpleProduct',
+    price: '$30',
+    allPaColor: {
+      nodes: [
+        {
+          id: '2',
+          databaseId: 2,
+          name: 'Blue',
+          slug: 'blue',
+        },
+      ],
+    },
   } as SimpleProduct,
 ];
+
+export const mockedColors = [
+  { id: '1', name: 'Red', slug: 'red' },
+  { id: '2', name: 'Blue', slug: 'blue' },
+  { id: '3', name: 'Green', slug: 'green' },
+] as PaColor[];
+
+export const mockedCategories = [
+  { id: '1', slug: 'cat-1', name: 'Category 1' },
+  { id: '2', slug: 'cat-2', name: 'Category 2' },
+] as ProductCategory[];

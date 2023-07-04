@@ -7,6 +7,10 @@ export interface CartMutationInput {
   mutation?: 'add'|'update'|'remove';
   quantity?: number;
   all?: boolean;
+  variation?: {
+    attributeName: string;
+    attributeValue: string;
+  }[]
 }
 
 export interface CartMutationCompositeInput extends CartMutationInput {
@@ -45,6 +49,10 @@ export interface SetShippingLocaleInput {
 const useCartMutations = (
   productId: number,
   variationId?: number,
+  variation?: {
+    attributeName: string;
+    attributeValue: string;
+  }[],
   extraData?: string,
 ) => {
   const {
@@ -54,18 +62,18 @@ const useCartMutations = (
     fetching,
   } = useSession();
   const [quantityFound, setQuantityInCart] = useState(
-    findInCart(productId, variationId, extraData)?.quantity as number || 0,
+    findInCart(productId, variationId, variation, extraData)?.quantity as number || 0,
   );
   const itemKey = useMemo(
-    () => findInCart(productId, variationId, extraData)?.key,
-    [findInCart, productId, variationId, extraData],
+    () => findInCart(productId, variationId, variation, extraData)?.key,
+    [findInCart, productId, variationId, variation, extraData],
   );
 
   useEffect(() => {
     setQuantityInCart(
-      findInCart(productId, variationId, extraData)?.quantity || 0,
+      findInCart(productId, variationId, variation, extraData)?.quantity || 0,
     );
-  }, [findInCart, productId, variationId, extraData, cart?.contents?.nodes]);
+  }, [findInCart, productId, variationId, variation, extraData, cart?.contents?.nodes]);
 
   async function mutate<T extends CartMutationInput>(values: T) {
     const {
@@ -93,6 +101,7 @@ const useCartMutations = (
         item = findInCart(
           productId,
           variationId,
+          variation,
           extraData,
         );
 
@@ -113,7 +122,7 @@ const useCartMutations = (
           throw new Error('Failed to find item in cart.');
         }
 
-        item = findInCart(productId, variationId, extraData);
+        item = findInCart(productId, variationId, variation, extraData);
 
         if (!item) {
           throw new Error('Failed to find item in cart.');
@@ -130,6 +139,7 @@ const useCartMutations = (
           quantity,
           productId,
           variationId,
+          variation,
           extraData,
         });
         break;

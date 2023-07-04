@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { ProductTypesEnum } from "@woographql/graphql";
-import { useShopContext, ProductWithPrice } from "@woographql/client/ShopProvider";
+import { useShopContext } from "@woographql/client/ShopProvider";
 import { Input } from "@woographql/ui/input";
 import { Slider } from "@woographql/ui/slider";
 

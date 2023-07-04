@@ -8,7 +8,7 @@ import { ShopProvider } from '@woographql/client/ShopProvider';
 
 export default async function ShopPage() {
   const products = await fetchProducts(1);
-  const categories = await fetchCategories(1) || [];
+  const categories = await fetchCategories(1, 0, { hideEmpty: true }) || [];
   const colors = await fetchColors(1) || [];
 
   if (!products) return (

@@ -10,11 +10,14 @@
     "codegen:dev": "graphql-codegen --config codegen.ts --watch",
     "codegen:build": "graphql-codegen --config codegen.ts",
     "dev": "run-p codegen:dev next:dev",
-    "build": "run-s codegen:build next:build",
+    "build": "NODE_ENV=production run-s codegen:build next:build",
     "test": "jest --coverage --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@fontsource/nunito": "^5.0.4",
+    "@fontsource/padauk": "^5.0.4",
+    "@fontsource/sansita": "^5.0.4",
     "@fortawesome/fontawesome-free": "^6.4.0",
     "@hookform/resolvers": "^3.1.1",
     "@radix-ui/react-aspect-ratio": "^1.0.3",

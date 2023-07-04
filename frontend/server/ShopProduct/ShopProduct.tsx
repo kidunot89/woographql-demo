@@ -24,7 +24,7 @@ export function ShopProduct(props: ShopProductProps) {
         <ProductImage product={product} />
         <div className="basis-full md:basis-1/2 pt-4 px-4 flex flex-col">
           <h1 className="font-serif text-2xl font-bold mb-2">{product.name}</h1>
-          <p className="font-serif text-lg font-bold mb-2">{product.shortDescription}</p>
+          <p className="text-lg font-bold mb-2">{product.shortDescription}</p>
           <CartOptions product={product} />
         </div>
         <Tabs defaultValue="description" className="w-full px-4">
@@ -40,7 +40,7 @@ export function ShopProduct(props: ShopProductProps) {
             <ul>
               {(product as SimpleProduct).defaultAttributes?.nodes?.map((attribute: VariationAttribute) => (
                 <li key={attribute?.id}>
-                  <p><strong>{attribute?.name}:</strong> {attribute.value}</p>
+                  <p><span className="font-serif font-medium">{attribute?.label}:</span> {attribute.value}</p>
                 </li>
               ))}
             </ul>

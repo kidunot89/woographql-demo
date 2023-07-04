@@ -7,9 +7,16 @@ export const linkClassName = 'transition-colors group-hover:text-blue-400';
 export interface NavLinkProps {
   href: string;
   className?: string;
+  shallow?: boolean;
 }
 
-export function NavLink({ children, href, className }: PropsWithChildren<NavLinkProps>) {
+export function NavLink(props: PropsWithChildren<NavLinkProps>) {
+  const {
+    children,
+    href,
+    className,
+    shallow,
+  } = props;
   return (
     <Link
       className={cn(
@@ -17,6 +24,7 @@ export function NavLink({ children, href, className }: PropsWithChildren<NavLink
         linkClassName,
       )}
       href={href}
+      shallow={shallow}
     >
       {children}
     </Link>

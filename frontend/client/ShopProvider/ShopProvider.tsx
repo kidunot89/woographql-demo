@@ -43,16 +43,7 @@ export interface ShopContext {
 }
 
 export type ShopAction =
-  | { type: 'SET_SEARCH', payload: string }
-  | { type: 'SET_CATEGORIES', payload: string[] }
-  | { type: 'ADD_CATEGORY', payload: string }
-  | { type: 'REMOVE_CATEGORY', payload: string }
-  | { type: 'CLEAR_CATEGORIES' }
-  | { type: 'SET_COLORS', payload: string[] }
-  | { type: 'ADD_COLOR', payload: string }
-  | { type: 'CLEAR_COLORS' }
-  | { type: 'REMOVE_COLOR', payload: string }
-  | { type: 'SET_PRICE_RANGE', payload: [number|null, number|null] }
+  | { type: 'UPDATE_STATE', payload: Partial<ShopContext> }
 
 const initialState: ShopContext = {
   search: '',
@@ -81,33 +72,8 @@ export function useShopContext() {
 
 const reducer = (state: ShopContext, action: ShopAction): ShopContext => {
   switch (action.type) {
-    case 'SET_SEARCH':
-      return { ...state, search: action.payload };
-    case 'SET_CATEGORIES':
-      return { ...state, selectedCategories: action.payload };
-    case 'ADD_CATEGORY':
-      return { ...state, selectedCategories: [...state.selectedCategories, action.payload] };
-    case 'REMOVE_CATEGORY':
-      return { ...state, selectedCategories: state.selectedCategories.filter((category) => category !== action.payload) };
-    case 'CLEAR_CATEGORIES':
-      return { ...state, selectedCategories: [] };
-    case 'SET_COLORS':
-      return { ...state, selectedColors: action.payload };
-    case 'ADD_COLOR':
-      return { ...state, selectedColors: [...state.selectedColors, action.payload] };
-    case 'REMOVE_COLOR':
-      return { ...state, selectedColors: state.selectedColors.filter((color) => color !== action.payload) };
-    case 'CLEAR_COLORS':
-      return { ...state, selectedColors: [] };
-    case 'SET_PRICE_RANGE':
-      const [min, max] = action.payload;
-      if (min === null) {
-        return { ...state, priceRange: [0, max] };
-      }
-      if (max === null) {
-        return { ...state, priceRange: [min, null] };
-      }
-      return { ...state, priceRange: [min, max] };
+    case 'UPDATE_STATE': 
+      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -222,16 +188,16 @@ export function ShopProvider({ allProducts, children }: PropsWithChildren<ShopPr
 
   useEffect(() => {
     if (search) {
-      dispatch({ type: 'SET_SEARCH', payload: search });
+      dispatch({ type: 'UPDATE_STATE', payload: { search } });
     }
     if (categories) {
-      dispatch({ type: 'SET_CATEGORIES', payload: categories.trim().split(',') });
+      dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: categories.trim().split(',') }});
     }
     if (colors) {
-      dispatch({ type: 'SET_COLORS', payload: colors.trim().split(',') });
+      dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: colors.trim().split(',') }});
     }
     if (price) {
-      dispatch({ type: 'SET_PRICE_RANGE', payload: price.trim().split(',').map((p) => Number(p) || null) as [number|null, number|null] });
+      dispatch({ type: 'UPDATE_STATE', payload: { priceRange: price.trim().split(',').map((p) => Number(p) || 0).reverse() as [number, number|null] }});
     }
   }, []);
 
@@ -252,18 +218,18 @@ export function ShopProvider({ allProducts, children }: PropsWithChildren<ShopPr
     }
 
     push(url.href, { shallow: true });
-  }, [state.search, state.selectedCategories, state.selectedColors, state.priceRange]);
+  }, [push, pathname, state]);
 
   const store = {
     ...state,
-    setSearch: (search: string) => dispatch({ type: 'SET_SEARCH', payload: search }),
-    addCategory: (category: string) => dispatch({ type: 'ADD_CATEGORY', payload: category }),
-    removeCategory: (category: string) => dispatch({ type: 'REMOVE_CATEGORY', payload: category }),
-    clearCategories: () => dispatch({ type: 'CLEAR_CATEGORIES' }),
-    addColor: (color: string) => dispatch({ type: 'ADD_COLOR', payload: color }),
-    removeColor: (color: string) => dispatch({ type: 'REMOVE_COLOR', payload: color }),
-    clearColors: () => dispatch({ type: 'CLEAR_COLORS' }),
-    setPriceRange: (priceRange: [number|null, number|null]) => dispatch({ type: 'SET_PRICE_RANGE', payload: priceRange }),
+    setSearch: (search: string) => dispatch({ type: 'UPDATE_STATE', payload: { search } }),
+    addCategory: (category: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: [...state.selectedCategories, category ]} }),
+    removeCategory: (category: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: state.selectedCategories.filter((c) => c !== category) }}),
+    clearCategories: () => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: [] }}),
+    addColor: (color: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: [...state.selectedColors, color ]} }),
+    removeColor: (color: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: state.selectedColors.filter((c) => c !== color) }}),
+    clearColors: () => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: [] }}),
+    setPriceRange: (priceRange: [number|null, number|null]) => dispatch({ type: 'UPDATE_STATE', payload: { priceRange: [priceRange[0] || 0, priceRange[1]] }}),
     ...filterProducts(allProducts, state),
   };
 

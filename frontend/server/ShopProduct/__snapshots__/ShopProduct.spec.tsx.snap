@@ -15,7 +15,7 @@ exports[`ShopProduct component should match snapshot 1`] = `
           T Shirt
         </h1>
         <p
-          class="font-serif text-lg font-bold mb-2"
+          class="text-lg font-bold mb-2"
         >
           Short description 1
         </p>

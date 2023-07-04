@@ -17,7 +17,7 @@ describe('ProductListing component', () => {
   it('renders correctly', () => {
     render(<ProductListing products={mockedProducts} />);
 
-    expect(screen.getByText('Showing 2 products')).toBeInTheDocument();
+    expect(screen.getByText('Showing 3 of 3 items')).toBeInTheDocument();
     expect(screen.getByText('Product 1')).toBeInTheDocument();
     expect(screen.getByText('Product 2')).toBeInTheDocument();
     expect(screen.getByText('This is product 1')).toBeInTheDocument();

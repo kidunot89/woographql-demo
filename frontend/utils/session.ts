@@ -295,7 +295,10 @@ export type CartAction = {
   productId: number;
   quantity: number;
   variationId?: number;
-  variation?: { [key: string]: string };
+  variation?: {
+    attributeName: string;
+    attributeValue: string;
+  }[]
   extraData?: string;
 } | {
   mutation: 'update';

@@ -34,11 +34,12 @@ async function createClientSessionId() {
     const response = await fetch('https://api.ipify.org/?format=json');
     const { data } = await response.json();
     credentials.ip = data?.ip || '';
-
-    // Mark time of creation.
-    credentials.issued = time();
-    localStorage.setItem(process.env.CLIENT_CREDENTIALS_LS_KEY as string, JSON.stringify(credentials));
   }
+
+  // Update timestamp to ensure new nonces are generated everytime
+  // the end-user starts that application.
+  credentials.issued = time();
+  localStorage.setItem(process.env.CLIENT_CREDENTIALS_LS_KEY as string, JSON.stringify(credentials));
 
   // Generate Client Session ID.
   const clientSessionId = wpNonceHash(JSON.stringify(credentials));

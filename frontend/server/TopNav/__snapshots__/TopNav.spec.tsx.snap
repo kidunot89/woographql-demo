@@ -4,10 +4,10 @@ exports[`TopNav component should match snapshot 1`] = `
 <body>
   <div>
     <nav
-      class="w-full bg-white h-36 py-4 px-4"
+      class="w-full bg-white min-h-24 py-4 px-4"
     >
       <ul
-        class="max-w-screen-lg mx-auto w-full flex flex-row gap-x-4 justify-end items-center"
+        class="max-w-screen-lg m-auto w-full flex flex-row gap-x-4 justify-end items-center"
       >
         <a
           class="mr-auto inline-flex items-center"

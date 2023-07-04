@@ -3,6 +3,7 @@ import {
   useState,
   useEffect,
   CSSProperties,
+  use,
 } from 'react';
 import cn from 'clsx';
 
@@ -37,7 +38,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [executing, setExecuting] = useState<'add'|'update'|'remove'|null>(null);
-  const { get, selectVariation, hasSelectedVariation } = useProductContext();
+  const { get, selectVariation, hasSelectedVariation, selectedVariation } = useProductContext();
  
   const rawPrice = get('rawPrice' as keyof Product) as string;
   const soldIndividually = get('soldIndividually') as boolean;
@@ -48,15 +49,14 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
   const attributes = product.attributes?.nodes || [];
   const variations = ((product as VariableProduct).variations?.nodes || []) as ProductVariation[];
 
+  const defaultAttributes = (product as VariableProduct).defaultAttributes?.nodes || [];
   const [selectedAttributes, selectAttributes] = useState<SelectedProductAttributes>(
-    (attributes || []).reduce(
+    (defaultAttributes || []).reduce(
       (results, attribute) => {
-        const { name, options, terms } = attribute as GlobalProductAttribute;
+        const { name, value, label } = attribute as VariationAttribute;
         return {
           ...results,
-          [name as string]: !terms
-            ? (options as string[])[0] as string
-            : (terms?.nodes as TermNode[])[0].name as string,
+          [label as string]: value as string,
         };
       },
       {},
@@ -69,17 +69,27 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
         variationAttributes?.nodes as VariationAttribute[] || []
       )?.every(
         ({ value, label }) => {
-          return value === '' || selectedAttributes[label as string] === value;
+          return !value || selectedAttributes[label as string] === value;
         }
       ),
     );
     selectVariation(variation);
-  }, [selectedAttributes, variations]);
+  }, [selectVariation, selectedAttributes, product]);
 
 
   const productId = product.databaseId;
   const variationId = get('databaseId') as number;
-  const { fetching, mutate, quantityFound } = useCartMutations(productId, variationId);
+  // Add any attributes not on the variation.
+  const variationAttributes = selectedVariation?.attributes?.nodes || [];
+  const variation = Object.entries((selectedAttributes))
+    .filter(([attributeName, attributeValue]) => {
+      return !!variationAttributes.find((variationAttribute) => {
+        const { value, label } = variationAttribute as VariationAttribute;
+        return !value && label === attributeName;
+      });
+    })
+    .map(([attributeName, attributeValue]) => ({ attributeName: attributeName.toLowerCase(), attributeValue }));
+  const { fetching, mutate, quantityFound } = useCartMutations(productId, variationId, variation);
 
   const outOfStock = stockStatus === StockStatusEnum.OUT_OF_STOCK;
   
@@ -95,6 +105,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
     event.preventDefault();
 
     setExecuting(mutation);
+
     await mutate({ mutation, quantity });
 
     if (mutation === 'add') {
@@ -156,7 +167,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
 
           return (
             <div key={id} className="w-full flex gap-x-4">
-              <p className="text-lg font-bold">{label || name}</p>
+              <p className="text-lg font-serif font-medium">{label || name}</p>
               <RadioGroup
                 className="flex gap-2"
                 name={name as string}
@@ -185,7 +196,6 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
                     buttonLabel = termName as string;
                     if (name?.toLowerCase() === 'color') {
                       style = {
-                        color: 'white',
                         backgroundColor: slug as string,
                       }
                     }
@@ -195,6 +205,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
                     <div key={id} className="flex items-center space-x-2">
                       <RadioGroupItem
                         id={id}
+                        className="w-6 h-6 text-lg"
                         value={value}
                         checked={selectedAttributes[name as string] === value}
                         style={style}
@@ -208,7 +219,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
           );
         })}
       </div>
-      {hasSelectedVariation ? (
+      {(hasSelectedVariation) ? (
         <>
           {(!soldIndividually || outOfStock) && (
             <Input
@@ -223,7 +234,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
           )}
           <p className="basis-auto grow text-center font-serif text-lg">
             {`× $${rawPrice} = `}
-            <strong>{`$${Number(rawPrice) * quantity}`}</strong>
+            <span className="font-bold">{`$${Number(rawPrice) * quantity}`}</span>
           </p>
           <div className="basis-full md:basis-auto flex gap-x-2">
             <Button

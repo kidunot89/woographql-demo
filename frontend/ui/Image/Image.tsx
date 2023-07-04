@@ -14,6 +14,8 @@ export type ImageProps = {
   ratio?: number;
   alt: string;
   style?: JSX.IntrinsicElements['img']['style']
+  fill?: boolean;
+  priority?: boolean;
 }
 
 export function Image(props: ImageProps) {
@@ -28,6 +30,8 @@ export function Image(props: ImageProps) {
     height,
     ratio,
     style,
+    fill = true,
+    priority,
   } = props;
 
   return (
@@ -55,8 +59,9 @@ export function Image(props: ImageProps) {
               ? 'grayscale blur-2xl scale-110'
               : 'grayscale-0 blur-0 scale-100',
           )}
-          fill
+          fill={fill}
           onLoadingComplete={() => setLoading(false)}
+          priority={priority}
         />
       </AspectRatio>
     </div>

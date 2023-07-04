@@ -209,6 +209,15 @@ fragment ProductContentFull on Product {
     stockStatus
     stockQuantity
     soldIndividually
+    defaultAttributes(first: 100) {
+      nodes {
+        id
+        attributeId
+        label
+        name
+        value
+      }
+    }
     variations(first: 50) {
       nodes {
         id
@@ -261,6 +270,12 @@ fragment CartItemContent on CartItem {
     }
   }
   variation {
+    attributes {
+      id
+      label
+      name
+      value
+    }
     node {
       ...ProductVariationContentSlice
     }
@@ -568,9 +583,21 @@ query GetCountryStates($country: CountriesEnum!) {
   }
 }
 
-mutation AddToCart($productId: Int!, $variationId: Int, $quantity: Int, $extraData: String) {
+mutation AddToCart(
+  $productId: Int!,
+  $variationId: Int,
+  $quantity: Int,
+  $variation: [ProductAttributeInput],
+  $extraData: String
+) {
   addToCart(
-    input: {productId: $productId, variationId: $variationId, quantity: $quantity, extraData: $extraData}
+    input: {
+      productId: $productId,
+      variationId: $variationId,
+      quantity: $quantity,
+      variation: $variation,
+      extraData: $extraData
+    }
   ) {
     cart {
       ...CartContent

@@ -1,6 +1,6 @@
 import { Product } from '@woographql/graphql';
 
-import { Image } from '@woographql/client/Image';
+import { Image } from '@woographql/ui/Image';
 import { useProductContext } from '@woographql/client/ProductProvider';
 
 export interface ProductImageProps {

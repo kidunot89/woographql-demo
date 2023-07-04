@@ -62,3 +62,9 @@ jest.mock('next/image', () => ({
 
 // eslint-disable-next-line global-require, import/no-extraneous-dependencies
 jest.mock('next/router', () => require('next-router-mock'));
+
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+}
+global.ResizeObserver = ResizeObserver as any;

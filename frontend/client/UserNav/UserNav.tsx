@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@woographql/client/SessionProvider';
 import { NavLink, linkClassName } from '@woographql/ui/NavLink';
 import { Button } from '@woographql/ui/button';
-import { useCallback } from 'react';
 
 export function UserNav() {
   const { push } = useRouter();
@@ -20,32 +19,22 @@ export function UserNav() {
     fetching,
   } = useSession();
 
-  console.log('cart', cartUrl);
-  console.log('account', accountUrl);
-  console.log('checkout', checkoutUrl);
+  const goToCart = () => {
+    push(cartUrl);
+  };
 
-  const goToCart = useCallback(() => {
-    const CartUrlToBeUsed = cartUrl;
-    refetchUrls();
-    push(CartUrlToBeUsed);
-  }, [cartUrl, refetchUrls]);
+  const goToCheckout = () => {
+    push(checkoutUrl);
+  };
 
-  const goToCheckout = useCallback(() => {
-    const CheckoutUrlToBeUsed = checkoutUrl;
-    refetchUrls();
-    push(CheckoutUrlToBeUsed);
-  }, [checkoutUrl, refetchUrls]);
+  const goToAccount = () => {
+    push(accountUrl);
+  };
 
-  const goToAccount = useCallback(() => {
-    const AccountUrlToBeUsed = accountUrl;
-    refetchUrls();
-    push(AccountUrlToBeUsed);
-  }, [accountUrl, refetchUrls]);
-
-  const logout = useCallback(() => {
+  const logout = () => {
     killSession(`Goodbye, ${customer?.firstName}`);
     refetchUrls();
-  }, [customer, killSession, refetchUrls]);
+  };
 
   return (
     <>
