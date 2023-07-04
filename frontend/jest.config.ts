@@ -21,10 +21,13 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/utils/',
-    '/graphql/generated.ts',
+    'graphql/',
     '/pages/',
     'codegen.ts',
     'jest.config.ts',
     'next-env.d.ts',
+    '.next/',
+    'testing/',
+    
   ],
 };
