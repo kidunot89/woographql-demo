@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import cn from 'clsx';
 
 import { Product, SimpleProduct } from '@woographql/graphql';
+import { useIsMobile } from '@woographql/hooks/mobile';
 import { Image } from "@woographql/ui/Image";
 import { useShopContext } from "@woographql/client/ShopProvider";
 import {
@@ -11,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@woographql/ui/card";
-import { Button } from '@woographql/ui/button';
 
 export interface ProductListingProps {
   products: Product[];
@@ -20,17 +22,23 @@ export interface ProductListingProps {
 const pageSize = 12;
 
 export function ProductListing({ products }: ProductListingProps) {
-  const { products: filteredProducts } = useShopContext();
-  const [page, setPage] = useState(1);
+  const { push } = useRouter();
+  const isMobile = useIsMobile();
+  const maxPages = isMobile ? 5 : 10;
+  const { products: filteredProducts, buildUrl, page } = useShopContext();
   const pageCount = Math.floor((filteredProducts || products).length / pageSize);
-  const nextPage = () => setPage((prevPage) => Math.min(prevPage + 1, pageCount));
-  const prevPage = () => setPage((prevPage) => Math.max(prevPage - 1, 1));
   const hasNext = page < pageCount;
   const hasPrev = page > 1;
 
-  
   const displayProducts = filteredProducts?.slice((page - 1) * pageSize, page * pageSize)
   || products.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    if (page > pageCount) {
+      const url = buildUrl({ page: pageCount });
+      push(url, { shallow: true });
+    }
+  }, [pageCount]);
 
   return (
     <>
@@ -68,33 +76,58 @@ export function ProductListing({ products }: ProductListingProps) {
         })}
       </div>
       <div className="flex justify-center my-4 gap-x-2 text-sms">
-        <Button
-          type="button"
-          onClick={prevPage}
-          disabled={!hasPrev}
+        <Link
+          href={buildUrl({ page: Math.max(page - 1, 1) })}
+          role="button"
+          className={cn(
+            hasPrev ? 'text-primary-foreground' : 'text-gray-400 opacity-50 pointer-events-none',
+            'self-center rounded-md text-sm font-medium transition-colors',
+            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+            'bg-primary shadow hover:bg-primary/90 h-9 px-4 py-2',
+          )}
           aria-label="Previous page"
-          >
-            <i className="fa-solid fa-chevron-left" aria-hidden />
-          </Button>
-          {Array.from({ length: pageCount }).map((_, index) => (
-            <Button
-              key={index}
-              type="button"
-              onClick={() => setPage(index + 1)}
-              disabled={page === index + 1}
-              aria-label={`Page ${index + 1}`}
-              >
-                {index + 1}
-            </Button>
-          ))}
-          <Button
-            type="button"
-            onClick={nextPage}
-            disabled={!hasNext}
-            aria-label="Next page"
-          >
-            <i className="fa-solid fa-chevron-right" aria-hidden />
-          </Button>
+          shallow
+        >
+          <i className="fa-solid fa-chevron-left leading-[0.95]" aria-hidden />
+        </Link>
+        <div className="flex flex-wrap justify-center gap-2">
+          {Array.from({ length: Math.min(pageCount, maxPages) }).map((_, index) => {
+            const pageNumber = page > Math.floor(maxPages / 2)
+              ? (page - Math.floor(maxPages / 2)) + index
+              : index + 1;
+            return (
+              <Link
+                key={index}
+                href={buildUrl({ page: pageNumber })}
+                role="button"
+                className={cn(
+                  page !== pageNumber ? 'text-primary-foreground' : 'text-gray-400 opacity-50 pointer-events-none',
+                  'rounded-md text-sm font-medium transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+                  'bg-primary shadow hover:bg-primary/90 h-9 px-4 py-2',
+                )}
+                aria-label={`Page ${pageNumber}`}
+                shallow
+                >
+                  {pageNumber}
+              </Link>
+            )
+          })}
+        </div>
+        <Link
+          href={buildUrl({ page: Math.min(page + 1, pageCount) })}
+          role="button"
+          className={cn(
+            hasNext ? 'text-primary-foreground' : 'text-gray-400 opacity-50 pointer-events-none',
+            'self-center rounded-md text-sm font-medium transition-colors',
+            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+            'bg-primary shadow hover:bg-primary/90 h-9 px-4 py-2',
+          )}
+          aria-label="Next page"
+          shallow
+        >
+          <i className="fa-solid fa-chevron-right" aria-hidden />
+        </Link>
       </div>
     </>
   );

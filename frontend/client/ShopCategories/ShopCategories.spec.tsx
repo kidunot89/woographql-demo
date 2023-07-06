@@ -10,8 +10,7 @@ import { useShopContext } from '@woographql/client/ShopProvider';
 jest.mock('@woographql/client/ShopProvider', () => ({
   useShopContext: jest.fn(() => ({
     selectedCategories: [],
-    addCategory: jest.fn(),
-    removeCategory: jest.fn(),
+    buildUrl: jest.fn(() => '/'),
   })),
 }));
 
@@ -22,25 +21,22 @@ describe('ShopCategories', () => {
         <ShopCategories categories={mockedCategories} />
     );
 
-    const categoryButtons = screen.getAllByRole('button');
+    const categoryButtons = screen.getAllByRole('link');
     expect(categoryButtons).toHaveLength(mockedCategories.length);
   });
 
   it('calls addCategory with correct argument when category button is clicked', () => {
-    const addCategory = jest.fn();
+    const buildUrl = jest.fn(() => '/');
     mockedUseShopContext.mockImplementation(() => ({
       selectedCategories: [],
-      addCategory,
-      removeCategory: jest.fn(),
+      buildUrl,
     } as any));
 
     render(
       <ShopCategories categories={mockedCategories} />
     );
 
-    const categoryButton = screen.getByText('Category 1');
-    fireEvent.click(categoryButton);
-
-    expect(addCategory).toHaveBeenCalledWith('cat-1');
+    expect(buildUrl).toHaveBeenCalledWith({ categories: ['cat-1'], page: 1});
+    expect(buildUrl).toHaveBeenCalledWith({ categories: ['cat-2'], page: 1});
   });
 });

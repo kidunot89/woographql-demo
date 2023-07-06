@@ -31,21 +31,27 @@ exports[`Shop component should match snapshot 1`] = `
           class="flex gap-2 flex-wrap mb-4"
         />
         <ul
-          class="mb-4"
+          class="mb-4 max-h-[40vh] lg:max-h-[25vh] overflow-y-scroll scrollbar-thin scrollbar-corner-rounded scrollbar-thumb-ring"
         >
-          <li>
-            <button
-              class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0"
+          <li
+            class="group py-2"
+          >
+            <a
+              class="transition-colors group-hover:text-blue-400"
+              href=""
             >
               Clothing
-            </button>
+            </a>
           </li>
-          <li>
-            <button
-              class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0"
+          <li
+            class="group py-2"
+          >
+            <a
+              class="transition-colors group-hover:text-blue-400"
+              href=""
             >
               Accessories
-            </button>
+            </a>
           </li>
         </ul>
         <p
@@ -57,51 +63,63 @@ exports[`Shop component should match snapshot 1`] = `
           class="flex gap-2 flex-wrap mb-4"
         />
         <ul
-          class="mb-4"
+          class="mb-4 max-h-[40vh] lg:max-h-[25vh] overflow-y-scroll scrollbar-thin scrollbar-corner-rounded scrollbar-thumb-ring"
         >
-          <li>
-            <button
-              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+          <li
+            class="group py-4"
+          >
+            <a
+              class="px-0 flex gap-2 transition-colors group-hover:text-blue-400"
+              href=""
             >
               <div
                 class="rounded w-6 h-6"
                 style="background-color: red;"
               />
               Red
-            </button>
+            </a>
           </li>
-          <li>
-            <button
-              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+          <li
+            class="group py-4"
+          >
+            <a
+              class="px-0 flex gap-2 transition-colors group-hover:text-blue-400"
+              href=""
             >
               <div
                 class="rounded w-6 h-6"
                 style="background-color: blue;"
               />
               Blue
-            </button>
+            </a>
           </li>
-          <li>
-            <button
-              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+          <li
+            class="group py-4"
+          >
+            <a
+              class="px-0 flex gap-2 transition-colors group-hover:text-blue-400"
+              href=""
             >
               <div
                 class="rounded w-6 h-6"
                 style="background-color: green;"
               />
               Green
-            </button>
+            </a>
           </li>
-          <li>
-            <button
-              class="items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-9 py-2 px-0 flex gap-2"
+          <li
+            class="group py-4"
+          >
+            <a
+              class="px-0 flex gap-2 transition-colors group-hover:text-blue-400"
+              href=""
             >
               <div
                 class="rounded w-6 h-6"
                 style="background-color: yellow;"
               />
               Yellow
-            </button>
+            </a>
           </li>
         </ul>
         <p
@@ -345,28 +363,31 @@ exports[`Shop component should match snapshot 1`] = `
         <div
           class="flex justify-center my-4 gap-x-2 text-sms"
         >
-          <button
+          <a
             aria-label="Previous page"
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-            disabled=""
-            type="button"
+            class="text-gray-400 opacity-50 pointer-events-none self-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary shadow hover:bg-primary/90 h-9 px-4 py-2"
+            href=""
+            role="button"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-chevron-left"
+              class="fa-solid fa-chevron-left leading-[0.95]"
             />
-          </button>
-          <button
+          </a>
+          <div
+            class="flex flex-wrap justify-center gap-2"
+          />
+          <a
             aria-label="Next page"
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-            disabled=""
-            type="button"
+            class="text-gray-400 opacity-50 pointer-events-none self-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary shadow hover:bg-primary/90 h-9 px-4 py-2"
+            href=""
+            role="button"
           >
             <i
               aria-hidden="true"
               class="fa-solid fa-chevron-right"
             />
-          </button>
+          </a>
         </div>
       </div>
     </div>

@@ -8,6 +8,8 @@ import { ProductListing } from '.';
 jest.mock('@woographql/client/ShopProvider', () => ({
   useShopContext: () => ({
     products: null,
+    buildUrl: jest.fn(() => '/'),
+    page: 1,
   }),
 }));
 

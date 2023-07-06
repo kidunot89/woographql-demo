@@ -23,7 +23,15 @@ export const MockSessionProvider = ({ children }: PropsWithChildren) => {
     sendPasswordReset: (username: string) => new Promise((resolve) => { resolve(false); }),
     updateCart: (action: CartAction) => new Promise((resolve) => { resolve(false); }),
     refetch: () => new Promise((resolve) => { resolve(false); }),
-    findInCart: (productId: number, variationId?: number, extraData?: string) => undefined,
+    findInCart: (
+      productId: number,
+      variationId?: number,
+      variation?: {
+        attributeName: string;
+        attributeValue: string;
+      }[],
+      extraData?: string
+    ) => undefined,
   };
 
   return (

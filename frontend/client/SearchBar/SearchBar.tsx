@@ -1,11 +1,14 @@
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useShopContext } from '@woographql/client/ShopProvider';
 import { Input } from "@woographql/ui/input";
 
 export function SearchBar() {
+  const { push } = useRouter();
   const {
-    setSearch,
+    currentUrl,
+    buildUrl,
     search,
   } = useShopContext();
   const [searchInput, setSearchInput] = useState(search);
@@ -23,7 +26,13 @@ export function SearchBar() {
   }, [searchInput]);
 
   useEffect(() => {
-    setSearch(debouncedSearchInput);
+    const url = buildUrl({
+      search: debouncedSearchInput,
+      page: 1,
+    });
+    if (url !== currentUrl) {
+      push(url, { shallow: true });
+    }
   }, [debouncedSearchInput]);
 
   return (

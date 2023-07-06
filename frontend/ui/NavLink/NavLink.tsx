@@ -8,6 +8,7 @@ export interface NavLinkProps {
   href: string;
   className?: string;
   shallow?: boolean;
+  prefetch?: boolean;
 }
 
 export function NavLink(props: PropsWithChildren<NavLinkProps>) {
@@ -16,6 +17,7 @@ export function NavLink(props: PropsWithChildren<NavLinkProps>) {
     href,
     className,
     shallow,
+    prefetch,
   } = props;
   return (
     <Link
@@ -25,6 +27,7 @@ export function NavLink(props: PropsWithChildren<NavLinkProps>) {
       )}
       href={href}
       shallow={shallow}
+      prefetch={prefetch}
     >
       {children}
     </Link>

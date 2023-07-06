@@ -1,22 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { useShopContext } from "@woographql/client/ShopProvider";
-import { Input } from "@woographql/ui/input";
-import { Slider } from "@woographql/ui/slider";
+import { useShopContext } from '@woographql/client/ShopProvider';
+import { Input } from '@woographql/ui/input';
+import { Slider } from '@woographql/ui/slider';
 
 export function PriceRange() {
+  const { push } = useRouter();
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(100);
   const [debouncedRange, setDebouncedRange] = useState<[number, number]>([0, 100]);
   const {
     globalMax,
     globalMin,
-    setPriceRange,
+    buildUrl,
   } = useShopContext();
-
-  useEffect(() => {
-    setPriceRange([globalMin, globalMax]);
-  }, [globalMin, globalMax]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -26,7 +24,11 @@ export function PriceRange() {
   }, [min, max]);
 
   useEffect(() => {
-    setPriceRange(debouncedRange);
+    const url = buildUrl({
+      price: debouncedRange,
+    });
+    
+    push(url, { shallow: true });
   }, [debouncedRange]);
 
   return (

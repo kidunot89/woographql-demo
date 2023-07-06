@@ -28,7 +28,7 @@ export const LoginSchema = z.object({
 
 export function Login() {
   const { login, isAuthenticated, fetching } = useSession();
-  const { push } = useRouter();
+  const router = useRouter();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -39,7 +39,7 @@ export function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      push('/');
+      router.push('/');
     }
   }, [isAuthenticated]);
 

@@ -1,7 +1,6 @@
 import {
   render,
   screen,
-  fireEvent,
   mockedColors,
   mockedProducts,
 } from '@woographql/testing';
@@ -11,9 +10,8 @@ import { PaColorPicker } from '.';
 jest.mock('@woographql/client/ShopProvider', () => ({
   useShopContext: jest.fn(() => ({
     selectedColors: [],
-    addColor: jest.fn(),
-    removeColor: jest.fn(),
     allProducts: mockedProducts,
+    buildUrl: jest.fn(() => '/'),
   })),
 }));
 
@@ -22,26 +20,24 @@ describe('PaColorPicker', () => {
   it('renders the correct number of color swatches', () => {
     render(<PaColorPicker colors={mockedColors} />);
 
-    const colorSwatches = screen.getAllByRole('button');
+    const colorSwatches = screen.getAllByRole('link');
     expect(colorSwatches).toHaveLength(mockedColors.length);
   });
 
   it('calls addColor with the correct argument when a color swatch is clicked', () => {
-    const addColor = jest.fn();
+    const buildUrl = jest.fn(() => '/');
     mockedUseShopContext.mockImplementation(() => ({
       selectedColors: [],
-      addColor,
-      removeColor: jest.fn(),
       allProducts: mockedProducts,
+      buildUrl
     } as any));
 
     render(
       <PaColorPicker colors={mockedColors} />
     );
 
-    const colorSwatch = screen.getByText('Red');
-    fireEvent.click(colorSwatch);
-
-    expect(addColor).toHaveBeenCalledWith('red');
+    expect(buildUrl).toHaveBeenCalledWith({ colors: ['red'] });
+    expect(buildUrl).toHaveBeenCalledWith({ colors: ['blue'] });
+    expect(buildUrl).toHaveBeenCalledWith({ colors: ['green'] });
   });
 });

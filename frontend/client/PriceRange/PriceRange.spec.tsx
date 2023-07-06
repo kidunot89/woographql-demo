@@ -1,17 +1,21 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PriceRange } from './PriceRange';
-import { useShopContext } from '@woographql/client/ShopProvider';
 
 jest.mock('@woographql/client/ShopProvider', () => ({
   useShopContext: jest.fn(() => ({
     globalMax: 100,
     globalMin: 0,
-    setPriceRange: jest.fn(),
+    buildUrl: jest.fn(() => '/'),
+  })),
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
   })),
 }));
 
 describe('PriceRange', () => {
-  const mockedUseShopContext = useShopContext as jest.MockedFunction<typeof useShopContext>;
   it('renders the correct number of input fields', () => {
     render(<PriceRange />);
 

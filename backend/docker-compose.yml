@@ -20,10 +20,10 @@ services:
       - memcached
     ports:
       - "8080:8080"
-    image: bitpoke/wordpress-runtime:bedrock-php-8.0
+    build:
+      context: . 
     volumes:
       - ./:/app
-      - ./bin/php.ini:/usr/local/etc/php/php.ini
     environment:
       - DB_HOST=db:3306
       - DB_USER=wordpress

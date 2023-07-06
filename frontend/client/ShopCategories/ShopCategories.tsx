@@ -4,6 +4,8 @@ import { useShopContext } from '@woographql/client/ShopProvider';
 import { Badge } from '@woographql/ui/badge';
 import { Button } from '@woographql/ui/button';
 import cn from 'clsx';
+import { NavLink } from '@woographql/ui/NavLink';
+import Link from 'next/link';
 
 export interface ShopCategoriesProps {
   categories: ProductCategory[];
@@ -12,8 +14,7 @@ export interface ShopCategoriesProps {
 export function ShopCategories({ categories }: ShopCategoriesProps) {
   const {
     selectedCategories,
-    addCategory,
-    removeCategory,
+    buildUrl,
   } = useShopContext();
   return (
     <>
@@ -23,35 +24,49 @@ export function ShopCategories({ categories }: ShopCategoriesProps) {
           if (!category) {
             return null;
           }
+
+          const href = buildUrl({
+            categories: selectedCategories.filter((s) => s !== slug),
+            page: 1,
+          });
           return (
-            <Badge
+            <Link
               key={category.id}
-              variant="outline"
-              onClick={() => removeCategory(slug)}
-              className={cn(
-                'hover:bg-red-500 hover:text-white cursor-pointer',
-                'transition-colors duration-250 ease-in-out'
-              )}
+              href={href}
+              shallow
+              prefetch={false}
             >
-              {category.name}
-            </Badge>
+              <Badge
+                variant="outline"
+                className={cn(
+                  'hover:bg-red-500 hover:text-white cursor-pointer',
+                  'transition-colors duration-250 ease-in-out'
+                )}
+              >
+                {category.name}
+              </Badge>
+            </Link>
           )
         })}
       </div>
-      <ul className="mb-4">
+      <ul className="mb-4 max-h-[40vh] lg:max-h-[25vh] overflow-y-scroll scrollbar-thin scrollbar-corner-rounded scrollbar-thumb-ring">
         {categories.map((category) => {
           if (selectedCategories.includes(category.slug as string)) {
             return null;
           }
+          const href = buildUrl({
+            categories: [...selectedCategories, category.slug as string],
+            page: 1,
+          });
           return (
-            <li key={category.id}>
-              <Button
-                variant="link"
-                className="px-0"
-                onClick={() => addCategory(category.slug as string)}
+            <li className="group py-2" key={category.id}>
+              <NavLink
+                href={href}
+                prefetch={false}
+                shallow
               >
                 {category.name}
-              </Button>
+              </NavLink>
             </li>
           );
         })}

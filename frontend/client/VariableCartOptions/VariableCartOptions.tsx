@@ -3,7 +3,6 @@ import {
   useState,
   useEffect,
   CSSProperties,
-  use,
 } from 'react';
 import cn from 'clsx';
 
@@ -16,6 +15,7 @@ import {
   VariationAttribute,
   ProductVariation,
 } from '@woographql/graphql';
+import { ucfirst } from '@woographql/utils/string';
 
 import useCartMutations from '@woographql/hooks/useCartMutations';
 import { useProductContext } from '@woographql/client/ProductProvider';
@@ -50,10 +50,11 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
   const variations = ((product as VariableProduct).variations?.nodes || []) as ProductVariation[];
 
   const defaultAttributes = (product as VariableProduct).defaultAttributes?.nodes || [];
+  
   const [selectedAttributes, selectAttributes] = useState<SelectedProductAttributes>(
     (defaultAttributes || []).reduce(
       (results, attribute) => {
-        const { name, value, label } = attribute as VariationAttribute;
+        const { value, label } = attribute as VariationAttribute;
         return {
           ...results,
           [label as string]: value as string,
@@ -69,12 +70,13 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
         variationAttributes?.nodes as VariationAttribute[] || []
       )?.every(
         ({ value, label }) => {
-          return !value || selectedAttributes[label as string] === value;
+          const index = ucfirst((label as string).replace(/_|-/g, ' '));
+          return !value || selectedAttributes[index] === value;
         }
       ),
     );
     selectVariation(variation);
-  }, [selectVariation, selectedAttributes, product]);
+  }, [selectedAttributes, product]);
 
 
   const productId = product.databaseId;

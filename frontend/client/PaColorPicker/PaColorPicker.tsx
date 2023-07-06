@@ -1,10 +1,11 @@
 import cn from 'clsx';
+import Link from 'next/link';
 
 import { PaColor } from "@woographql/graphql";
 import { useShopContext } from '@woographql/client/ShopProvider';
 
 import { Badge } from "@woographql/ui/badge";
-import { Button } from "@woographql/ui/button";
+import { NavLink } from "@woographql/ui/NavLink";
 
 interface ColorSwatchProps {
   color: string;
@@ -30,9 +31,8 @@ export interface PaColorPickerProps {
 
 export function PaColorPicker({ colors }: PaColorPickerProps) {
   const {
+    buildUrl,
     selectedColors,
-    addColor,
-    removeColor,
     allProducts,
   } = useShopContext();
 
@@ -60,39 +60,50 @@ export function PaColorPicker({ colors }: PaColorPickerProps) {
           if (!color) {
             return null;
           }
+
+          const href = buildUrl({
+            colors: selectedColors.filter((s) => s !== slug),
+          });
           return (
-            <Badge
+            <Link
               key={color.id}
-              variant="outline"
-              onClick={() => removeColor(slug)}
-              className={cn(
-                'hover:bg-red-500 hover:text-white cursor-pointer',
-                'transition-colors duration-250 ease-in-out',
-                'flex gap-1 border-0'
-              )}
+              href={href}
+              shallow
+              prefetch={false}
             >
-              <ColorSwatch color={color.slug as string} circle small />
-              {color.name}
-            </Badge>
+              <Badge
+                variant="outline"
+                className={cn(
+                  'hover:bg-red-500 hover:text-white cursor-pointer',
+                  'transition-colors duration-250 ease-in-out',
+                  'flex gap-1 border-0'
+                )}
+              >
+                <ColorSwatch color={color.slug as string} circle small />
+                {color.name}
+              </Badge>
+            </Link>
           )
         })}
       </div>
-      <ul className="mb-4">
+      <ul className="mb-4 max-h-[40vh] lg:max-h-[25vh] overflow-y-scroll scrollbar-thin scrollbar-corner-rounded scrollbar-thumb-ring">
         {displayedColors.map((color) => {
           if (selectedColors.includes(color.slug as string)) {
             return null;
           }
 
+          const href = buildUrl({
+            colors: [...selectedColors, color.slug as string],
+          });
           return (
-            <li key={color.id}>
-              <Button
-                variant="link"
+            <li className="group py-4" key={color.id}>
+              <NavLink
+                href={href}
                 className="px-0 flex gap-2"
-                onClick={() => addColor(color.slug as string)}
               >
                 <ColorSwatch color={color.slug as string} />
                 {color.name}
-              </Button>
+              </NavLink>
             </li>
           );
         })}

@@ -56,15 +56,13 @@ const getNodeText = (node: React.ReactNode[]|React.ReactNode): React.ReactNode|s
 jest.mock('next/image', () => ({
   __esModule: true,
   // eslint-disable-next-line jsx-a11y/alt-text
-  default: (props: { [key:string]: unknown}) => <img {...props} />
+  default: ({ fill, priority, ...props }: { [key:string]: unknown}) => <img {...props} />
   ,
 }));
-
-// eslint-disable-next-line global-require, import/no-extraneous-dependencies
-jest.mock('next/router', () => require('next-router-mock'));
 
 class ResizeObserver {
   observe() {}
   unobserve() {}
 }
+
 global.ResizeObserver = ResizeObserver as any;

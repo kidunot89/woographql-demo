@@ -4,11 +4,10 @@ import { SearchBar } from '.';
 
 jest.mock('@woographql/client/ShopProvider', () => ({
   useShopContext: () => ({
-    setSearch: jest.fn(),
+    buildUrl: jest.fn(() => '/'),
     search: '',
   }),
 }));
-
 
 describe('SearchBar', () => {
   it('renders correctly', () => {

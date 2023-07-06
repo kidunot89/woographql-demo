@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { print } from 'graphql';
 
 import {
+  GetSessionDocument,
+  GetSessionQuery,
   LoginDocument,
   LoginMutation,
   getClient,
@@ -30,21 +32,24 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
-    const { data, headers } = await graphQLClient.rawRequest<LoginMutation>(print(LoginDocument), { username, password });
-    const sessionToken = headers.get('woocommerce-session');
-
+    const data = await graphQLClient.request<LoginMutation>(LoginDocument, { username, password });
     if (!data?.login) {
       return NextResponse.json({ errors: { message: 'Login failed.' } }, { status: 500 });
     }
 
+    const { authToken, refreshToken } = data?.login;
+    if (!authToken || !refreshToken) {
+      return NextResponse.json({ errors: { message: 'Failed to retrieve credentials.' } }, { status: 500 });
+    }
+
+    graphQLClient.setHeader('Authorization', `Bearer ${data.login.authToken}`);
+    const { data:_, headers } = await graphQLClient.rawRequest<GetSessionQuery>(print(GetSessionDocument));
+    
+    const sessionToken = headers.get('woocommerce-session');
     if (!sessionToken) {
       return NextResponse.json({ errors: { message: 'Failed to retrieve session token.' } }, { status: 500 });
     }
 
-    const { authToken, refreshToken, customer } = data?.login;
-    if (!authToken || !refreshToken || !customer) {
-      return NextResponse.json({ errors: { message: 'Failed to retrieve credentials.' } }, { status: 500 });
-    }
 
     return NextResponse.json({ authToken, refreshToken, sessionToken });
   } catch (err) {

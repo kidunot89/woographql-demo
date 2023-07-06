@@ -171,6 +171,7 @@ fragment ProductContentFull on Product {
         label
         options
         variation
+        slug
         terms(first: 100) {
           nodes {
             id
@@ -197,6 +198,7 @@ fragment ProductContentFull on Product {
         attributeId
         name
         value
+        label
       }
     }
   }

@@ -4,9 +4,9 @@ import {
   useReducer,
   createContext,
   PropsWithChildren,
+  useCallback,
 } from 'react';
 import {
-  useRouter,
   usePathname,
   useSearchParams,
 } from 'next/navigation';
@@ -23,17 +23,20 @@ import {
 export type ProductWithPrice = SimpleProduct & { rawPrice: string }
   | VariableProduct & { rawPrice: string };
 
+type URLParts = {
+  search?: string;
+  categories?: string[];
+  colors?: string[];
+  price?: [number, number|null];
+  page?: number;
+};
 export interface ShopContext {
+  currentUrl: string;
+  buildUrl: (params: URLParts) => string;
+  page: number;
   search: string;
-  setSearch: (search: string) => void;
   selectedCategories: string[];
-  addCategory: (category: string) => void;
-  removeCategory: (category: string) => void;
-  clearCategories: () => void;
   selectedColors: string[];
-  addColor: (color: string) => void;
-  removeColor: (color: string) => void;
-  clearColors: () => void;
   priceRange: [number, number|null];
   setPriceRange: (priceRange: [number|null, number|null]) => void;
   globalMin: number;
@@ -46,16 +49,12 @@ export type ShopAction =
   | { type: 'UPDATE_STATE', payload: Partial<ShopContext> }
 
 const initialState: ShopContext = {
+  currentUrl: '',
+  buildUrl: () => '',
+  page: 1,
   search: '',
-  setSearch: () => {},
   selectedCategories: [],
-  addCategory: () => {},
-  removeCategory: () => {},
-  clearCategories: () => {},
   selectedColors: [],
-  addColor: () => {},
-  removeColor: () => {},
-  clearColors: () => {},
   priceRange: [0, null],
   setPriceRange: () => {},
   globalMin: 0,
@@ -169,8 +168,8 @@ function filterProducts(products: Product[], state: ShopContext) {
   };
 }
 
-
 const { Provider } = shopContext;
+
 
 export interface ShopProviderProps {
   allProducts: Product[];
@@ -178,58 +177,66 @@ export interface ShopProviderProps {
 
 export function ShopProvider({ allProducts, children }: PropsWithChildren<ShopProviderProps>) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { push } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const search = searchParams?.get('search');
-  const categories = searchParams?.get('categories');
-  const colors = searchParams?.get('colors');
-  const price = searchParams?.get('price');
+  const currentParams = searchParams.toString();
+  
 
   useEffect(() => {
-    if (search) {
-      dispatch({ type: 'UPDATE_STATE', payload: { search } });
-    }
-    if (categories) {
-      dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: categories.trim().split(',') }});
-    }
-    if (colors) {
-      dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: colors.trim().split(',') }});
-    }
-    if (price) {
-      dispatch({ type: 'UPDATE_STATE', payload: { priceRange: price.trim().split(',').map((p) => Number(p) || 0).reverse() as [number, number|null] }});
-    }
-  }, []);
+    dispatch({ type: 'UPDATE_STATE', payload: {
+      search: searchParams.get('search') || '',
+      selectedCategories: searchParams.get('categories')?.trim().split('|') || [],
+      selectedColors: searchParams.get('colors')?.trim().split('|') || [],
+      priceRange: searchParams.get('price')
+        ?.trim()
+        .split('-')
+        .map((p) => Number(p) || 0)
+        .reverse() as [number, number|null] || [0, null],
+      page: Number(searchParams.get('page')) || 1,
+    }});
+  }, [currentParams]);
 
-  useEffect(() => {
-    const url = new URL(`${process.env.FRONTEND_URL}/${pathname}`);
+  const buildUrl = useCallback((params: URLParts) => {
+    const urlParts = {
+      search: searchParams.get('search'),
+      categories: searchParams.get('categories')?.trim().split('|') || [],
+      colors: searchParams.get('colors')?.trim().split('|') || [],
+      price: searchParams.get('price')
+        ?.trim()
+        .split('-')
+        .map((p) => Number(p) || 0)
+        .reverse() as [number, number|null],
+      page: Number(searchParams.get('page')),
+      ...params,
+    };
 
-    if (state.search) {
-      url.searchParams.set('search', state.search);
+    const url = new URL(`${process.env.FRONTEND_URL}${pathname}`);
+
+    if (urlParts.search) {
+      url.searchParams.set('search', urlParts.search);
     }
-    if (state.selectedCategories.length) {
-      url.searchParams.set('categories', state.selectedCategories.join(','));
+    if (urlParts.categories.length) {
+      url.searchParams.set('categories', urlParts.categories.join('|'));
     }
-    if (state.selectedColors.length) {
-      url.searchParams.set('colors', state.selectedColors.join(','));
+    if (urlParts.colors.length) {
+      url.searchParams.set('colors', urlParts.colors.join('|'));
     }
-    if ((0 !== state.priceRange[0] || state.priceRange[1])) {
-      url.searchParams.set('price', state.priceRange.filter(price => !!price).join(','));
+    const price = urlParts.price;
+    if (price && ((0 !== price[0] && state.globalMin !== price[0]) 
+      || price[1] && state.globalMax !== price[1])) {
+      url.searchParams.set('price', price.filter(p => !!p).join('-'));
+    }
+    if (urlParts.page && urlParts.page !== 1) {
+      url.searchParams.set('page', urlParts.page.toString());
     }
 
-    push(url.href, { shallow: true });
-  }, [push, pathname, state]);
+    return `${url.pathname}${url.search}`;
+  }, [searchParams, pathname]);
 
   const store = {
     ...state,
-    setSearch: (search: string) => dispatch({ type: 'UPDATE_STATE', payload: { search } }),
-    addCategory: (category: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: [...state.selectedCategories, category ]} }),
-    removeCategory: (category: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: state.selectedCategories.filter((c) => c !== category) }}),
-    clearCategories: () => dispatch({ type: 'UPDATE_STATE', payload: { selectedCategories: [] }}),
-    addColor: (color: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: [...state.selectedColors, color ]} }),
-    removeColor: (color: string) => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: state.selectedColors.filter((c) => c !== color) }}),
-    clearColors: () => dispatch({ type: 'UPDATE_STATE', payload: { selectedColors: [] }}),
-    setPriceRange: (priceRange: [number|null, number|null]) => dispatch({ type: 'UPDATE_STATE', payload: { priceRange: [priceRange[0] || 0, priceRange[1]] }}),
+    currentUrl: `${pathname}${searchParams.toString()}`,
+    buildUrl,
     ...filterProducts(allProducts, state),
   };
 
