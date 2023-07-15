@@ -1,11 +1,11 @@
 import { PropsWithChildren } from 'react';
-import cn from 'clsx';
 
 import {
   Product,
   ProductTypesEnum,
   SimpleProduct,
 } from '@woographql/graphql';
+import { cn } from '@woographql/utils/ui';
 
 import { SimpleCartOptions } from '@woographql/client/SimpleCartOptions';
 import { VariableCartOptions } from '@woographql/client/VariableCartOptions';

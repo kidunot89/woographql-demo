@@ -1,11 +1,11 @@
-import { ProductCategory } from '@woographql/graphql';
-
-import { useShopContext } from '@woographql/client/ShopProvider';
-import { Badge } from '@woographql/ui/badge';
-import { Button } from '@woographql/ui/button';
-import cn from 'clsx';
-import { NavLink } from '@woographql/ui/NavLink';
 import Link from 'next/link';
+
+import { cn } from '@woographql/utils/ui';
+import { ProductCategory } from '@woographql/graphql';
+import { useShopContext } from '@woographql/client/ShopProvider';
+
+import { Badge } from '@woographql/ui/badge';
+import { NavLink } from '@woographql/ui/NavLink';
 
 export interface ShopCategoriesProps {
   categories: ProductCategory[];
@@ -72,5 +72,5 @@ export function ShopCategories({ categories }: ShopCategoriesProps) {
         })}
       </ul>
     </>
-  )
+  );
 }

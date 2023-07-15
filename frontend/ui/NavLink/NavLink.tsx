@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import Link from 'next/link';
-import cn from 'clsx';
+import { cn } from '@woographql/utils/ui';
 
 export const linkClassName = 'transition-colors group-hover:text-blue-400';
 

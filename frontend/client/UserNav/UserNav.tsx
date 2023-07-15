@@ -1,6 +1,6 @@
-import cn from 'clsx';
-
 import { useRouter } from 'next/navigation';
+
+import { cn } from '@woographql/utils/ui';
 import { useSession } from '@woographql/client/SessionProvider';
 import { NavLink, linkClassName } from '@woographql/ui/NavLink';
 import { Button } from '@woographql/ui/button';

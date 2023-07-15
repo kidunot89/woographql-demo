@@ -3,8 +3,8 @@ import {
   useState,
   useEffect,
 } from 'react';
-import cn from 'clsx';
 
+import { cn } from '@woographql/utils/ui';
 import { Product, StockStatusEnum } from '@woographql/graphql';
 
 import type { ProductWithPrice } from '@woographql/client/ShopProvider';
@@ -103,8 +103,9 @@ export function SimpleCartOptions(props: CartOptionsProps) {
         />
       )}
       <p className="basis-auto grow text-center font-serif text-lg">
-        {`× $${rawPrice} = `}
-        <strong>{`$${Number(rawPrice) * quantity}`}</strong>
+        {outOfStock && 'Out Of Stock'}
+        {(!soldIndividually || outOfStock) && `× $${rawPrice} = `}
+        {!outOfStock && (<strong>{`$${Number(rawPrice) * quantity}`}</strong>)}
       </p>
       <div className="basis-full md:basis-auto flex gap-x-2">
         <Button

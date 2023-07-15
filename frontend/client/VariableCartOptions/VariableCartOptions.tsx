@@ -4,8 +4,8 @@ import {
   useEffect,
   CSSProperties,
 } from 'react';
-import cn from 'clsx';
 
+import { cn } from '@woographql/utils/ui';
 import {
   Product,
   VariableProduct,
@@ -80,7 +80,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
 
 
   const productId = product.databaseId;
-  const variationId = get('databaseId') as number;
+  const variationId = hasSelectedVariation ? get('databaseId') as number : undefined;
   // Add any attributes not on the variation.
   const variationAttributes = selectedVariation?.attributes?.nodes || [];
   const variation = Object.entries((selectedAttributes))
@@ -235,8 +235,9 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
             />
           )}
           <p className="basis-auto grow text-center font-serif text-lg">
-            {`× $${rawPrice} = `}
-            <span className="font-bold">{`$${Number(rawPrice) * quantity}`}</span>
+            {outOfStock && 'Out Of Stock'}
+            {(!soldIndividually || outOfStock) && `× $${rawPrice} = `}
+            {!outOfStock && (<strong>{`$${Number(rawPrice) * quantity}`}</strong>)}
           </p>
           <div className="basis-full md:basis-auto flex gap-x-2">
             <Button

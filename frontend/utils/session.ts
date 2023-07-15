@@ -1,10 +1,6 @@
 import { GraphQLError } from 'graphql/error';
 
-import {
-  UpdateCustomerInput,
-  Customer,
-  Cart,
-} from '@woographql/graphql';
+import { Customer, Cart } from '@woographql/graphql';
 import { isSSR } from '@woographql/utils/ssr';
 import { getClientSessionId } from '@woographql/utils/client';
 import { MINUTE_IN_SECONDS, time } from '@woographql/utils/nonce';
@@ -159,28 +155,6 @@ export async function login(username: string, password: string): Promise<boolean
   return true;
 }
 
-type SendPasswordResetResponse = {
-  success: boolean
-}
-export async function sendPasswordReset(username: string): Promise<boolean|string> {
-  let json: SendPasswordResetResponse;
-  try {
-    json = await apiCall<SendPasswordResetResponse>(
-      '/api/send-reset',
-      {
-        method: 'POST',
-        body: JSON.stringify({ username }),
-      },
-    );
-  } catch (error) {
-    return (error as GraphQLError)?.message || error as string;
-  }
-
-  const { success } = json;
-
-  return success;
-}
-
 export async function getAuthToken() {
   let authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
   if (!authToken || authTokenIsExpired()) {
@@ -258,34 +232,6 @@ export async function getSession(): Promise<FetchSessionResponse|string> {
   return json;
 }
 
-type FetchCustomerResponse = {
-  customer: Customer;
-}
-export async function updateCustomer(input: UpdateCustomerInput): Promise<Customer|string> {
-  const sessionToken = await getSessionToken();
-  const authToken = await getAuthToken();
-  let json: FetchCustomerResponse;
-  try {
-    json = await apiCall<FetchCustomerResponse>(
-      '/api/customer',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          sessionToken,
-          authToken,
-          input,
-        }),
-      },
-    );
-  } catch (error) {
-    return (error as GraphQLError)?.message || error as string;
-  }
-
-  const { customer } = json;
-
-  return customer;
-}
-
 type FetchCartResponse = {
   cart: Cart;
   sessionToken: string;
@@ -334,8 +280,6 @@ export async function updateCart(input: CartAction): Promise<Cart|string> {
 
   return cart;
 }
-
-
 
 export type FetchAuthURLResponse = {
   cartUrl: string;

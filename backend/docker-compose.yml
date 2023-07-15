@@ -24,6 +24,7 @@ services:
       context: . 
     volumes:
       - ./:/app
+      - ../../wp-graphql-woocommerce:/app/web/app/plugins/wp-graphql-woocommerce
     environment:
       - DB_HOST=db:3306
       - DB_USER=wordpress

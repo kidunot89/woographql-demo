@@ -77,6 +77,7 @@
     "test": [
       "phpcs"
     ],
-    "generate-products": "docker-compose exec php wait-for-it -s -t 300 db:3306 -- generate-products"
+    "generate-products": "docker-compose exec php wait-for-it -s -t 300 db:3306 -- generate-products",
+    "generate-products:local": "bin/generate-products.sh --"
   }
 }

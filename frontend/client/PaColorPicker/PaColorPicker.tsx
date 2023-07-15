@@ -1,11 +1,12 @@
-import cn from 'clsx';
+
 import Link from 'next/link';
 
-import { PaColor } from "@woographql/graphql";
+import { cn } from '@woographql/utils/ui';
+import { PaColor } from '@woographql/graphql';
 import { useShopContext } from '@woographql/client/ShopProvider';
 
-import { Badge } from "@woographql/ui/badge";
-import { NavLink } from "@woographql/ui/NavLink";
+import { Badge } from '@woographql/ui/badge';
+import { NavLink } from '@woographql/ui/NavLink';
 
 interface ColorSwatchProps {
   color: string;

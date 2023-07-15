@@ -1,3 +1,4 @@
+import { ProductProvider } from '@woographql/client/ProductProvider';
 import {
   fetchProductBy,
   ProductIdTypeEnum,
@@ -19,6 +20,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 
   return (
-    <ShopProduct product={product} />
+    <ProductProvider product={product}>
+      <ShopProduct product={product} />
+    </ProductProvider>
   );
 }

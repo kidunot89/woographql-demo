@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useSession } from '@woographql/client/SessionProvider';
-import { CartItem } from '@woographql/graphql';
 
 export interface CartMutationInput {
   mutation?: 'add'|'update'|'remove';
@@ -11,39 +10,6 @@ export interface CartMutationInput {
     attributeName: string;
     attributeValue: string;
   }[]
-}
-
-export interface CartMutationCompositeInput extends CartMutationInput {
-  configuration: {
-    componentId: string;
-    productId?: number;
-    hidden?: boolean;
-    quantity?: number;
-    variation?: {
-      attributeName: string;
-      attributeValue: string;
-    }[]
-    variationId?: number;
-  }[];
-}
-
-export interface CartMutationBundleInput extends CartMutationInput {
-  bundleItems: {
-    bundleItemId: number;
-    optionalSelected?: boolean;
-    quantity?: number;
-    variation?: {
-      attributeName: string;
-      attributeValue: string;
-    }[]
-    variationId?: number;
-  }[];
-}
-
-export interface SetShippingLocaleInput {
-  zip: string;
-  state?: string;
-  city?: string;
 }
 
 const useCartMutations = (
@@ -91,28 +57,19 @@ const useCartMutations = (
       // TODO: Send error to Sentry.IO.
     }
 
-    let item: CartItem|undefined;
     switch (mutation) {
       case 'remove': {
         if (!quantityFound) {
           throw new Error('Provided item not in cart');
         }
 
-        item = findInCart(
-          productId,
-          variationId,
-          variation,
-          extraData,
-        );
-
-        if (!item) {
+        if (!itemKey) {
           throw new Error('Failed to find item in cart.');
         }
 
-        const { key } = item;
         updateCart({
           mutation: 'remove',
-          keys: [key],
+          keys: [itemKey],
           all,
         });
         break;
@@ -122,15 +79,13 @@ const useCartMutations = (
           throw new Error('Failed to find item in cart.');
         }
 
-        item = findInCart(productId, variationId, variation, extraData);
-
-        if (!item) {
+        if (!itemKey) {
           throw new Error('Failed to find item in cart.');
         }
 
         updateCart({
           mutation: 'update',
-          items: [{ key: item.key, quantity }]
+          items: [{ key: itemKey, quantity }]
         });
         break;
       default:
