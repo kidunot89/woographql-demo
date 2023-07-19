@@ -70,13 +70,12 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
         variationAttributes?.nodes as VariationAttribute[] || []
       )?.every(
         ({ value, label }) => {
-          const index = ucfirst((label as string).replace(/_|-/g, ' '));
-          return !value || selectedAttributes[index] === value;
+          return !value || selectedAttributes[label as string] === value;
         }
       ),
     );
     selectVariation(variation);
-  }, [selectedAttributes, product]);
+  }, [selectVariation, selectedAttributes, product]);
 
 
   const productId = product.databaseId;
@@ -84,7 +83,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
   // Add any attributes not on the variation.
   const variationAttributes = selectedVariation?.attributes?.nodes || [];
   const variation = Object.entries((selectedAttributes))
-    .filter(([attributeName, attributeValue]) => {
+    .filter(([attributeName]) => {
       return !!variationAttributes.find((variationAttribute) => {
         const { value, label } = variationAttribute as VariationAttribute;
         return !value && label === attributeName;
@@ -209,7 +208,7 @@ export function VariableCartOptions({ product }: CartOptionsProps) {
                         id={id}
                         className="w-6 h-6 text-lg"
                         value={value}
-                        checked={selectedAttributes[name as string] === value}
+                        checked={selectedAttributes[label as string] === value}
                         style={style}
                       />
                       <Label htmlFor={id}>{buttonLabel}</Label>
