@@ -51,7 +51,7 @@ export function ProductListing({ products }: ProductListingProps) {
             <Link href={`/product/${product.slug}`} key={product.id}>
               <Card className="w-44 md:w-36">
                 <CardHeader className="p-4">
-                  <CardTitle className="font-serif whitespace-nowrap">{product.name}</CardTitle>
+                  <CardTitle className="font-serif whitespace-nowrap truncate w-full">{product.name}</CardTitle>
                   {sourceUrl && (
                     <Image
                       width={176}

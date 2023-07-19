@@ -19,12 +19,11 @@ jest.mock('@woographql/client/SessionProvider', () => ({
   useSession: jest.fn(() => ({
     cart: { contents: { itemCount: 5, nodes: [], edges: [] } },
     customer: { firstName: 'John' },
-    cartUrl: '/cart',
-    checkoutUrl: '/checkout',
-    accountUrl: '/account',
+    goToCartPage: jest.fn(),
+    goToCheckoutPage: jest.fn(),
+    goToAccountPage: jest.fn(),
     logout: jest.fn(),
     isAuthenticated: false,
-    refetchUrls: jest.fn(),
     fetching: false,
   } as unknown as SessionContext))
 }));
@@ -35,9 +34,19 @@ describe('UserNav component', () => {
   const mockedUseSession = useSession as jest.MockedFunction<typeof useSession>;
   const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
   const mockPush = jest.fn();
-  beforeEach(() => {      
+  beforeEach(() => {   
     mockedUseRouter.mockImplementation(() => ({
       push: mockPush,
+    } as any));
+    mockedUseSession.mockImplementation(() => ({
+      cart: { contents: { itemCount: 5, nodes: [], edges: [] } },
+      customer: { firstName: 'John' },
+      goToCartPage: jest.fn(() => mockPush('/cart')),
+      goToCheckoutPage: jest.fn(() => mockPush('/checkout')),
+      goToAccountPage: jest.fn(() => mockPush('/account')),
+      logout: jest.fn(),
+      isAuthenticated: false,
+      fetching: false,
     } as any));
   });
 
@@ -66,12 +75,9 @@ describe('UserNav component', () => {
     mockedUseSession.mockImplementation(() => ({
       cart: { contents: { itemCount: 5, nodes: [], edges: [] } },
       customer: { firstName: 'John' },
-      cartUrl: '/cart',
-      checkoutUrl: '/checkout',
-      accountUrl: '/account',
+      goToAccountPage: jest.fn(() => mockPush('/account')),
       logout: jest.fn(),
       isAuthenticated: true,
-      refetchUrls: jest.fn(),
       fetching: false,
     } as unknown as SessionContext));
 
@@ -86,9 +92,9 @@ describe('UserNav component', () => {
     mockedUseSession.mockImplementation(() => ({
       cart: { contents: { itemCount: 5, nodes: [], edges: [] } },
       customer: { firstName: 'John' },
-      cartUrl: '/cart',
-      checkoutUrl: '/checkout',
-      accountUrl: '/account',
+      goToCartPage: jest.fn(() => mockPush('/cart')),
+      goToCheckoutPage: jest.fn(() => mockPush('/checkout')),
+      goToAccountPage: jest.fn(() => mockPush('/account')),
       logout: mockLogout,
       isAuthenticated: true,
       refetchUrls: jest.fn(),

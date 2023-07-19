@@ -61,6 +61,9 @@ function saveSessionToken(sessionToken: string) {
 }
 
 export function hasCredentials() {
+  if (isSSR()) {
+    return false;
+  }
   const sessionToken = localStorage.getItem(process.env.SESSION_TOKEN_LS_KEY as string);
   const authToken = sessionStorage.getItem(process.env.AUTH_TOKEN_SS_KEY as string);
   const refreshToken = localStorage.getItem(process.env.REFRESH_TOKEN_LS_KEY as string);

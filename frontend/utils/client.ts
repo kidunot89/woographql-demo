@@ -1,4 +1,3 @@
-import { isSSR } from '@woographql/utils/ssr';
 import {
   wpNonceHash,
   time,
@@ -105,10 +104,6 @@ export async function getClientSessionId() {
 }
 
 export function deleteClientSessionId() {
-  if (isSSR()) {
-    return;
-  }
-
   if (clientSetter) {
     clearInterval(clientSetter);
   }
@@ -117,10 +112,6 @@ export function deleteClientSessionId() {
 }
 
 export function deleteClientCredentials() {
-  if (isSSR()) {
-    return;
-  }
-
   deleteClientSessionId();
   localStorage.removeItem(process.env.CLIENT_CREDENTIALS_LS_KEY as string);
 }

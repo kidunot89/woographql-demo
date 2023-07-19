@@ -10,30 +10,16 @@ export function UserNav() {
   const {
     cart,
     customer,
-    cartUrl,
-    checkoutUrl,
-    accountUrl,
+    goToCartPage,
+    goToAccountPage,
+    goToCheckoutPage,
     logout: killSession,
     isAuthenticated,
-    refetchUrls,
     fetching,
   } = useSession();
 
-  const goToCart = () => {
-    push(cartUrl);
-  };
-
-  const goToCheckout = () => {
-    push(checkoutUrl);
-  };
-
-  const goToAccount = () => {
-    push(accountUrl);
-  };
-
   const logout = () => {
     killSession(`Goodbye, ${customer?.firstName}`);
-    refetchUrls();
   };
 
   return (
@@ -47,7 +33,7 @@ export function UserNav() {
           )}
           disabled={fetching}
           variant='link'
-          onClick={goToCart}
+          onClick={goToCartPage}
         >
           {cart?.contents?.itemCount || 0}
           <i className="fa-solid fa-basket-shopping" aria-hidden />
@@ -65,7 +51,7 @@ export function UserNav() {
           )}
           disabled={fetching}
           variant='link'
-          onClick={goToCheckout}
+          onClick={goToCheckoutPage}
         >
           <i className="fa-solid fa-cash-register" aria-hidden />
           <span className="transition-all origin-left w-0 scale-x-0 group-hover:scale-x-100 group-hover:w-16">
@@ -84,7 +70,7 @@ export function UserNav() {
               )}
               disabled={fetching}
               variant='link'
-              onClick={goToAccount}
+              onClick={goToAccountPage}
             >
               <i className="fa-solid fa-user" aria-hidden />
               <span className="transition-all origin-left w-0 scale-x-0 group-hover:scale-x-100 group-hover:w-16">

@@ -102,7 +102,7 @@ fragment ProductContentSmall on Product {
       name
     }
   }
-  allPaColor(first: 20) {
+  allPaColor(first: 100) {
     nodes {
       id
       slug
@@ -717,11 +717,6 @@ mutation UpdateSession($input: UpdateSessionInput!) {
         id
         key
         value
-    }
-    customer {
-      cartNonce
-      checkoutNonce
-      accountNonce
     }
   }
 }

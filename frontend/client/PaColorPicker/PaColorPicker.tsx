@@ -44,8 +44,8 @@ export function PaColorPicker({ colors }: PaColorPickerProps) {
           return false;
         }
 
-        return !product.allPaColor.nodes.some((node: PaColor) => {
-          return node.slug !== color.slug;
+        return product.allPaColor.nodes.some((node: PaColor) => {
+          return node.slug === color.slug;
         });
       });
 

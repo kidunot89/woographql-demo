@@ -237,7 +237,7 @@ exports[`Shop component should match snapshot 1`] = `
                 class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap truncate w-full"
                 >
                   T Shirt
                 </h3>
@@ -270,7 +270,7 @@ exports[`Shop component should match snapshot 1`] = `
                 class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap truncate w-full"
                 >
                   Belt
                 </h3>
@@ -303,7 +303,7 @@ exports[`Shop component should match snapshot 1`] = `
                 class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap truncate w-full"
                 >
                   Shoes
                 </h3>
@@ -336,7 +336,7 @@ exports[`Shop component should match snapshot 1`] = `
                 class="flex flex-col space-y-1.5 p-4"
               >
                 <h3
-                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap"
+                  class="font-semibold leading-none tracking-tight font-serif whitespace-nowrap truncate w-full"
                 >
                   Hat
                 </h3>

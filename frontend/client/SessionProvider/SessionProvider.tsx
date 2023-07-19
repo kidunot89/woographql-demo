@@ -5,6 +5,7 @@ import {
   useReducer,
   useEffect,
 } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   Customer,
@@ -13,14 +14,13 @@ import {
   MetaData,
   VariationAttribute,
 } from '@woographql/graphql';
-import { isSSR } from '@woographql/utils/ssr';
 import {
   hasCredentials,
   deleteCredentials,
   getSession as getSessionApiCall,
   FetchSessionResponse as Session,
   FetchAuthURLResponse as AuthUrls,
-  fetchAuthURLs as fetchAuthURLsApiCall,
+  fetchAuthURLs,
   login as loginApiCall,
   updateCart as updateCartApiCall,
   CartAction,
@@ -37,11 +37,9 @@ export interface SessionContext {
   hasCredentials: boolean;
   cart: Cart|null;
   customer: Customer|null;
-  cartUrl: string;
-  checkoutUrl: string;
-  accountUrl: string
-  urlsExpired: boolean;
-  refetchUrls: () => void;
+  goToCartPage?: () => void;
+  goToCheckoutPage?: () => void;
+  goToAccountPage?: () => void;
   fetching: boolean;
   logout: (message?: string) => void;
   login: (username: string, password: string, successMessage?: string) => Promise<boolean>;
@@ -63,11 +61,9 @@ const initialContext: SessionContext = {
   hasCredentials: false,
   cart: null,
   customer: null,
-  cartUrl: '',
-  checkoutUrl: '',
-  accountUrl: '',
-  urlsExpired: true,
-  refetchUrls: () => null,
+  goToCartPage: () => null,
+  goToCheckoutPage: () => null,
+  goToAccountPage: () => null,
   fetching: false,
   logout: (message?: string) => null,
   login: (username: string, password: string) => new Promise((resolve) => { resolve(false); }),
@@ -190,27 +186,7 @@ const { Provider } = sessionContext;
 export function SessionProvider({ children }: PropsWithChildren) {
   const { toast } = useToast();
   const [state, dispatch] = useReducer(reducer, initialContext);
-
-  const fetchAuthURLs = () => {
-    return fetchAuthURLsApiCall()
-      .then((payload) => {
-        if (typeof payload === 'string') {
-          toast({
-            title: 'Session Error',
-            description: 'Failed to generate session URLs. Please refresh the page.',
-            variant: 'destructive'
-          });
-
-          return false;
-        }
-        
-        dispatch({
-          type: 'UPDATE_STATE',
-          payload: { ...payload, fetching: false } as SessionContext,
-        });
-        return true;
-      });
-  };
+  const router = useRouter();
 
   // Process session fetch request response.
   const setSession = (session: Session|string, authUrls: AuthUrls|string) => {
@@ -239,7 +215,22 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     dispatch({
       type: 'UPDATE_STATE',
-      payload: { ...session, ...authUrls, fetching: false } as SessionContext,
+      payload: {
+        ...session,
+        goToCartPage: () => {
+          deleteClientSessionId();
+          router.push(authUrls.cartUrl);
+        },
+        goToCheckoutPage: () => {
+          deleteClientSessionId();
+          router.push(authUrls.checkoutUrl);
+        },
+        goToAccountPage: () => {
+          deleteClientSessionId();
+          router.push(authUrls.accountUrl);
+        },
+        fetching: false
+      } as SessionContext,
     });
 
     return true;
@@ -278,7 +269,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     return getSessionApiCall()
       .then(async (sessionPayload) => {
-        const authUrlPayload = await fetchAuthURLsApiCall();
+        const authUrlPayload = await fetchAuthURLs();
         return setSession(sessionPayload, authUrlPayload);
       });
   };
@@ -339,17 +330,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return items.find(cartItemSearch(productId, variationId, variation, extraData, true)) || undefined;
   };
 
-  const refetchUrls = () => {
-    deleteClientSessionId();
-    dispatch({
-      type: 'UPDATE_STATE',
-      payload: { urlsExpired: true, fetching: true } as SessionContext,
-    });
-    fetchAuthURLs();
-  };
-
   useEffect(() => {
-    if (isSSR() || state.fetching) {
+    if (state.fetching) {
       return;
     }
 
@@ -363,13 +345,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const store: SessionContext = {
     ...state,
     isAuthenticated: !!state.customer?.id && 'guest' !== state.customer.id,
-    hasCredentials: (!isSSR() && hasCredentials()) || false,
+    hasCredentials: hasCredentials(),
     logout,
     updateCart,
     refetch: fetchSession,
     findInCart,
     login,
-    refetchUrls,
   };
   return (
     <Provider value={store}>{children}</Provider>

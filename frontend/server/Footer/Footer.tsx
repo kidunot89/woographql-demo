@@ -5,12 +5,11 @@ import { cn } from '@woographql/utils/ui';
 function CreatorInfo() {
   return (
     <>
-      <small className="flex-shrink basis-auto lg:mr-3">
+      <small className="flex-shrink basis-auto lg:mr-2">
         <strong>{process.env.SITE_NAME}</strong>
-        &nbsp;
       </small>
       <small className="mb-6 basis-auto lg:mb-0">
-        Created by
+        created by
         &nbsp;
         <Link className="font-bold text-background" href="https://woographql.com/about">Geoff Taylor</Link>
       </small>
