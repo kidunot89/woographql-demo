@@ -328,87 +328,6 @@ fragment CartContent on Cart {
   discountTotal
 }
 
-fragment AddressFields on CustomerAddress {
-    firstName
-    lastName
-    company
-    address1
-    address2
-    city
-    state
-    country
-    postcode
-    phone
-}
-
-fragment LineItemFields on LineItem {
-    databaseId
-    product {
-        node {
-            ...ProductContentSlice
-        }
-    }
-    orderId
-    quantity
-    subtotal
-    total
-    totalTax
-}
-
-fragment OrderFields on Order {
-    id
-    databaseId
-    orderNumber
-    orderVersion
-    status
-    needsProcessing
-    subtotal
-    paymentMethodTitle
-    total
-    totalTax
-    billing {
-      ...AddressFields
-    }
-    shipping {
-      ...AddressFields
-    }
-    lineItems(first: 100) {
-        nodes {
-            ...LineItemFields
-        }
-    }
-    downloadableItems(first: 100) {
-      nodes {
-        downloadId
-      }
-    }
-    date
-    dateCompleted
-    datePaid
-}
-
-fragment DownloadableFields on DownloadableItem {
-  id
-  downloadId
-  accessExpires
-  downloadsRemaining
-  name
-  product {
-      ...ProductContentSlice
-  }
-  url
-}
-
-fragment PaymentTokenFields on PaymentTokenCC {
-  id
-  tokenId
-  isDefault
-  last4
-  expiryMonth
-  expiryYear
-  cardType
-}
-
 fragment CustomerFields on Customer {
     id
     databaseId
@@ -421,31 +340,6 @@ fragment CustomerFields on Customer {
       key
       value
     }
-    billing {
-      ...AddressFields
-    }
-    shipping {
-      ...AddressFields
-    }
-    orders(first: 100) {
-      nodes {
-        ...OrderFields
-      } 
-    }
-    downloadableItems(first: 100) {
-        nodes {
-          ...DownloadableFields
-        }
-    }
-    availablePaymentMethodsCC {
-      ...PaymentTokenFields
-    }
-}
-
-query GetAccountData {
-  customer {
-    ...CustomerFields
-  }
 }
 
 query GetTopNav {
@@ -475,30 +369,6 @@ query GetProducts($first: Int, $after: String, $where: RootQueryToProductConnect
 query GetProduct($id: ID!, $idType: ProductIdTypeEnum) {
   product(id: $id, idType: $idType) {
     ...ProductContentFull
-  }
-}
-
-query GetProductVariation($id: ID!) {
-  productVariation(id: $id, idType: DATABASE_ID) {
-    ...VariationContent
-  }
-}
-
-query GetAllProductSlugs($first: Int, $after: String, $where: RootQueryToProductConnectionWhereArgs) {
-  products(first: $first, after: $after, where: $where) {
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-    edges {
-      cursor
-      node {
-        ...ProductContentSlice
-      }
-    }
-    nodes {
-      ...ProductContentSlice
-    }
   }
 }
 
@@ -574,17 +444,6 @@ query GetSession {
   }
 }
 
-query GetCountries {
-  allowedCountries
-}
-
-query GetCountryStates($country: CountriesEnum!) {
-  allowedCountryStates(country: $country) {
-    name
-    code
-  }
-}
-
 mutation AddToCart(
   $productId: Int!,
   $variationId: Int,
@@ -632,48 +491,6 @@ mutation RemoveItemsFromCart($keys: [ID], $all: Boolean) {
   }
 }
 
-mutation ApplyCouponToCart($code: String!) {
-  applyCoupon(input: {code: $code}) {
-    cart {
-      ...CartContent
-    }
-  }
-}
-
-mutation RemoveCouponFromCart($code: String!) {
-  removeCoupons(input: {codes: [$code]}) {
-    cart {
-      ...CartContent
-    }
-  }
-}
-
-mutation RemoveCouponsFromCart($codes: [String!]) {
-  removeCoupons(input: {codes: $codes}) {
-    cart {
-      ...CartContent
-    }
-  }
-}
-
-mutation SetShippingLocale($zip: String!, $state: String, $city: String, $country: CountriesEnum) {
-  updateCustomer(
-    input: {shipping: {postcode: $zip, country: $country, state: $state, city: $city}}
-  ) {
-    customer {
-      ...CustomerContent
-    }
-  }
-}
-
-mutation SetShippingMethod($shippingMethod: String!) {
-  updateShippingMethod(input: {shippingMethods: [$shippingMethod]}) {
-    cart {
-      ...CartContent
-    }
-  }
-}
-
 mutation Login($username: String!, $password: String!) {
   login(input: { username: $username, password: $password }) {
     authToken
@@ -690,27 +507,6 @@ mutation RefreshAuthToken($refreshToken: String!) {
   }
 }
 
-
-mutation UpdateCustomer($input: UpdateCustomerInput!) {
-  updateCustomer(input: $input) {
-    customer {
-      ...CustomerFields
-    }
-  }
-}
-
-mutation SetDefaultPaymentMethod ($tokenId: Int!) {
-  setDefaultPaymentMethod(input: { tokenId: $tokenId }) {
-    status
-  }
-}
-
-mutation DeletePaymentMethod($tokenId: Int!) {
-  deletePaymentMethod(input: { tokenId: $tokenId }) {
-    status
-  }
-}
-
 mutation UpdateSession($input: UpdateSessionInput!) {
   updateSession(input: $input) {
     session {
@@ -723,11 +519,5 @@ mutation UpdateSession($input: UpdateSessionInput!) {
       checkoutUrl
       accountUrl
     }
-  }
-}
-
-mutation SendPasswordResetEmail($username: String!) {
-  sendPasswordResetEmail(input: { username: $username }) {
-    success
   }
 }
