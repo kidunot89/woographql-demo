@@ -5,7 +5,6 @@ import {
   useReducer,
   useEffect,
 } from 'react';
-import { useRouter } from 'next/navigation';
 
 import {
   Customer,
@@ -26,7 +25,6 @@ import {
   CartAction,
 } from '@woographql/utils/session';
 import {
-  deleteClientSessionId,
   deleteClientCredentials,
 } from '@woographql/utils/client';
 import { useToast } from '@woographql/ui/use-toast';
@@ -37,9 +35,9 @@ export interface SessionContext {
   hasCredentials: boolean;
   cart: Cart|null;
   customer: Customer|null;
-  goToCartPage?: () => void;
-  goToCheckoutPage?: () => void;
-  goToAccountPage?: () => void;
+  cartUrl: string;
+  checkoutUrl: string;
+  accountUrl: string;
   fetching: boolean;
   logout: (message?: string) => void;
   login: (username: string, password: string, successMessage?: string) => Promise<boolean>;
@@ -61,9 +59,9 @@ const initialContext: SessionContext = {
   hasCredentials: false,
   cart: null,
   customer: null,
-  goToCartPage: () => null,
-  goToCheckoutPage: () => null,
-  goToAccountPage: () => null,
+  cartUrl: '',
+  checkoutUrl: '',
+  accountUrl: '',
   fetching: false,
   logout: (message?: string) => null,
   login: (username: string, password: string) => new Promise((resolve) => { resolve(false); }),
@@ -186,7 +184,6 @@ const { Provider } = sessionContext;
 export function SessionProvider({ children }: PropsWithChildren) {
   const { toast } = useToast();
   const [state, dispatch] = useReducer(reducer, initialContext);
-  const router = useRouter();
 
   // Process session fetch request response.
   const setSession = (session: Session|string, authUrls: AuthUrls|string) => {
@@ -217,18 +214,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       type: 'UPDATE_STATE',
       payload: {
         ...session,
-        goToCartPage: () => {
-          deleteClientSessionId();
-          router.push(authUrls.cartUrl);
-        },
-        goToCheckoutPage: () => {
-          deleteClientSessionId();
-          router.push(authUrls.checkoutUrl);
-        },
-        goToAccountPage: () => {
-          deleteClientSessionId();
-          router.push(authUrls.accountUrl);
-        },
+        ...authUrls,
         fetching: false
       } as SessionContext,
     });
@@ -340,7 +326,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   
   }, []);
-      
 
   const store: SessionContext = {
     ...state,

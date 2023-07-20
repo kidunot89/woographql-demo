@@ -15,6 +15,7 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     domains: [
       'localhost',
+      'woographqldemo.wpengine.com',
     ],
     minimumCacheTTL: 60,
     disableStaticImages: true,

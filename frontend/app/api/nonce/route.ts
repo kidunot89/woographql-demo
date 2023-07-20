@@ -56,14 +56,20 @@ export async function POST(request: Request) {
       { input },
     );
 
-    if (!results.updateSession) {
+    if (!results.updateSession || !results.updateSession.customer) {
       const message = 'Failed to update session';
       return NextResponse.json({ errors: { message } }, { status: 500 });
     }
 
-    const cartUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Cart);
-    const checkoutUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Checkout);
-    const accountUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Account);
+    const {
+      cartUrl,
+      checkoutUrl,
+      accountUrl,
+    } = results.updateSession.customer;
+
+    // const cartUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Cart);
+    // const checkoutUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Checkout);
+    // const accountUrl = generateUrl(sessionToken, clientSessionId, ActionTypes.Account);
 
     return NextResponse.json({ cartUrl, checkoutUrl, accountUrl });
   } catch (err) {

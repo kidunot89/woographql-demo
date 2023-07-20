@@ -1,22 +1,39 @@
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@woographql/utils/ui';
+import { deleteClientSessionId } from '@woographql/utils/client';
 import { useSession } from '@woographql/client/SessionProvider';
 import { NavLink, linkClassName } from '@woographql/ui/NavLink';
 import { Button } from '@woographql/ui/button';
 
 export function UserNav() {
-  const { push } = useRouter();
+  const router = useRouter();
   const {
     cart,
     customer,
-    goToCartPage,
-    goToAccountPage,
-    goToCheckoutPage,
+    cartUrl,
+    checkoutUrl,
+    accountUrl,
     logout: killSession,
     isAuthenticated,
     fetching,
   } = useSession();
+
+  console.log(cartUrl);
+
+  const goToCartPage = () => {
+    deleteClientSessionId();
+    console.log('Go to cart page');
+    window.location.href = cartUrl;
+  };
+  const goToCheckoutPage = () => {
+    deleteClientSessionId();
+    window.location.href = checkoutUrl;
+  };
+  const goToAccountPage = () => {
+    deleteClientSessionId();
+    window.location.href = accountUrl;
+  };
 
   const logout = () => {
     killSession(`Goodbye, ${customer?.firstName}`);

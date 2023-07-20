@@ -714,9 +714,14 @@ mutation DeletePaymentMethod($tokenId: Int!) {
 mutation UpdateSession($input: UpdateSessionInput!) {
   updateSession(input: $input) {
     session {
-        id
-        key
-        value
+      id
+      key
+      value
+    }
+    customer {
+      cartUrl
+      checkoutUrl
+      accountUrl
     }
   }
 }
