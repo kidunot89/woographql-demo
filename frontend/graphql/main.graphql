@@ -514,10 +514,5 @@ mutation UpdateSession($input: UpdateSessionInput!) {
       key
       value
     }
-    customer {
-      cartUrl
-      checkoutUrl
-      accountUrl
-    }
   }
 }
